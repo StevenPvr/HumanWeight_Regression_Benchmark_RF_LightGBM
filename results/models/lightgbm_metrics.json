@@ -1,0 +1,23 @@
+{
+  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/lightgbm.joblib",
+  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
+  "params_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/best_lightgbm_params.json",
+  "target_column": "weight-(kg)",
+  "random_state": 123,
+  "validation": {
+    "mse": 1.379405705594721
+  },
+  "training_rows": 11999,
+  "validation_rows": 4001,
+  "best_params": {
+    "n_estimators": 1863,
+    "learning_rate": 0.013855642404654556,
+    "num_leaves": 354,
+    "max_depth": 14,
+    "min_child_samples": 26,
+    "subsample": 0.7276280751687296,
+    "colsample_bytree": 0.5543816813470782,
+    "reg_lambda": 19.192849668958537,
+    "reg_alpha": 10.047676285972248
+  }
+}

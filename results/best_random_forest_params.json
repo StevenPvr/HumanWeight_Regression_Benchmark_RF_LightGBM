@@ -1,0 +1,19 @@
+{
+  "best_params": {
+    "n_estimators": 293,
+    "max_depth": 29,
+    "min_samples_split": 11,
+    "min_samples_leaf": 1,
+    "max_features": 0.3000600576598142,
+    "bootstrap": false
+  },
+  "best_value": 0.6414507181608485,
+  "val_metrics": {
+    "mse": 0.6414507181608485
+  },
+  "data_summary": {
+    "train_rows": 11999,
+    "val_rows": 4001,
+    "train_val_rows": 16000
+  }
+}

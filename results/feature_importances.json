@@ -1,0 +1,112 @@
+[
+  {
+    "feature": "water-intake-(liters)",
+    "importance_mean": 1.0259761764572723,
+    "importance_std": 0.02110975285490696
+  },
+  {
+    "feature": "age",
+    "importance_mean": 0.23877735272297967,
+    "importance_std": 0.007750499886297058
+  },
+  {
+    "feature": "session-duration-(hours)",
+    "importance_mean": 0.1743649783499567,
+    "importance_std": 0.006480195727485186
+  },
+  {
+    "feature": "prep-time-min",
+    "importance_mean": 0.1292300379257088,
+    "importance_std": 0.004876285003254764
+  },
+  {
+    "feature": "cholesterol-mg",
+    "importance_mean": 0.11309091417977643,
+    "importance_std": 0.004608008837210753
+  },
+  {
+    "feature": "serving-size-g",
+    "importance_mean": 0.10730033972947794,
+    "importance_std": 0.00309691678147866
+  },
+  {
+    "feature": "sugar-g",
+    "importance_mean": 0.09532077277486524,
+    "importance_std": 0.0019592134982172934
+  },
+  {
+    "feature": "sodium-mg",
+    "importance_mean": 0.0863133082930771,
+    "importance_std": 0.002776887567792341
+  },
+  {
+    "feature": "max-bpm",
+    "importance_mean": 0.07801155882774596,
+    "importance_std": 0.002792322111752918
+  },
+  {
+    "feature": "cook-time-min",
+    "importance_mean": 0.0652528432755722,
+    "importance_std": 0.0027245289232065814
+  },
+  {
+    "feature": "workout-frequency-(days/week)",
+    "importance_mean": 0.05054570901258691,
+    "importance_std": 0.0022841047978692493
+  },
+  {
+    "feature": "rating",
+    "importance_mean": 0.03902525545804365,
+    "importance_std": 0.0015450341334599207
+  },
+  {
+    "feature": "avg-bpm",
+    "importance_mean": 0.03166216169369083,
+    "importance_std": 0.0011999381729672022
+  },
+  {
+    "feature": "resting-bpm",
+    "importance_mean": 0.0289145580350633,
+    "importance_std": 0.000431801893758505
+  },
+  {
+    "feature": "pct-maxhr",
+    "importance_mean": 0.017125286087834347,
+    "importance_std": 0.0005569605080716717
+  },
+  {
+    "feature": "experience-level",
+    "importance_mean": 0.01428755855737337,
+    "importance_std": 0.000600039518048928
+  },
+  {
+    "feature": "daily-meals-frequency",
+    "importance_mean": 0.0051176822928087895,
+    "importance_std": 0.0002938684337767718
+  },
+  {
+    "feature": "physical-exercise",
+    "importance_mean": 0.002383443698290666,
+    "importance_std": 0.00013970344193073048
+  },
+  {
+    "feature": "cooking-method",
+    "importance_mean": 4.79838347955397e-07,
+    "importance_std": 3.13591978734796e-06
+  },
+  {
+    "feature": "workout-type",
+    "importance_mean": -1.6510213022513654e-06,
+    "importance_std": 7.032841654319175e-06
+  },
+  {
+    "feature": "diet-type",
+    "importance_mean": -1.961459393828857e-06,
+    "importance_std": 8.744771586385658e-06
+  },
+  {
+    "feature": "gender",
+    "importance_mean": -4.238816803037171e-06,
+    "importance_std": 2.327106609183934e-06
+  }
+]

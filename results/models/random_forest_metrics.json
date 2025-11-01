@@ -1,0 +1,20 @@
+{
+  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/random_forest.joblib",
+  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
+  "params_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/best_random_forest_params.json",
+  "target_column": "weight-(kg)",
+  "random_state": 123,
+  "validation": {
+    "mse": 0.6414507181608483
+  },
+  "training_rows": 11999,
+  "validation_rows": 4001,
+  "best_params": {
+    "n_estimators": 293,
+    "max_depth": 29,
+    "min_samples_split": 11,
+    "min_samples_leaf": 1,
+    "max_features": 0.3000600576598142,
+    "bootstrap": false
+  }
+}

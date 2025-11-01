@@ -1,0 +1,22 @@
+{
+  "best_params": {
+    "n_estimators": 1863,
+    "learning_rate": 0.013855642404654556,
+    "num_leaves": 354,
+    "max_depth": 14,
+    "min_child_samples": 26,
+    "subsample": 0.7276280751687296,
+    "colsample_bytree": 0.5543816813470782,
+    "reg_lambda": 19.192849668958537,
+    "reg_alpha": 10.047676285972248
+  },
+  "best_value": 1.379405705594721,
+  "val_metrics": {
+    "mse": 1.379405705594721
+  },
+  "data_summary": {
+    "train_rows": 11999,
+    "val_rows": 4001,
+    "train_val_rows": 16000
+  }
+}

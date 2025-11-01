@@ -1,0 +1,18 @@
+{
+  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/random_forest.joblib",
+  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
+  "target_column": "weight-(kg)",
+  "metrics": {
+    "mae": 0.518716607156941,
+    "mse": 0.6681698018539312,
+    "rmse": 0.8174165412162462,
+    "r2": 0.9985238657823137,
+    "mape": 0.007328054182188059,
+    "median_ae": 0.3654760618124939,
+    "explained_variance": 0.9985256733039579,
+    "y_std": 21.275535405643144,
+    "pred_std": 20.956183954624464,
+    "residual_std": 0.8169159259442765
+  },
+  "shap": null
+}
