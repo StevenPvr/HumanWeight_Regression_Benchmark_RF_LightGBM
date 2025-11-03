@@ -1,16 +1,11 @@
-"""Unit tests for feature engineering helpers.
-
-Currently validates loading of split parquet via src.utils.load_splits_from_parquet.
-"""
+"""Unit tests for feature engineering helpers."""
 
 from __future__ import annotations
 
+import os
 import sys
+from collections.abc import Callable
 from pathlib import Path
-
-project_root = Path(__file__).parent.parent.parent
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
 
 import json
 
@@ -129,9 +124,11 @@ def test_split_features_target_missing_raises() -> None:
 
 
 
-def test_compute_random_forest_permutation_importance_runs() -> None:
+def test_compute_random_forest_permutation_importance_runs(
+    random_state_factory: Callable[[int | None], np.random.RandomState]
+) -> None:
     """RF permutation importance returns a well-formed DataFrame without leakage."""
-    rng = np.random.RandomState(42)
+    rng = random_state_factory(42)
     X = pd.DataFrame({
         "signal": rng.normal(size=40),
         "noise": rng.normal(size=40),

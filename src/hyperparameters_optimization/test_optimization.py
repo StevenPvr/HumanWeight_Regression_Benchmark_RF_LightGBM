@@ -1,26 +1,18 @@
 from __future__ import annotations
 
-import os
 import sys
+from collections.abc import Callable
 from pathlib import Path
-from typing import Tuple, List
+from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
 import pytest
 
-try:
-    from .optimization import (
-        optimize_lightgbm_hyperparameters,
-        optimize_random_forest_hyperparameters,
-    )
-except ImportError:
-    # Allow running this test file directly without package context
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from src.hyperparameters_optimization.optimization import (
-        optimize_lightgbm_hyperparameters,
-        optimize_random_forest_hyperparameters,
-    )
+from src.hyperparameters_optimization.optimization import (
+    optimize_lightgbm_hyperparameters,
+    optimize_random_forest_hyperparameters,
+)
 
 
 def _make_mock_split(
@@ -57,12 +49,15 @@ def _make_mock_split(
     df = pd.concat([X, pd.Series(y, name="target")], axis=1)
     return df
 
-def test_optimize_lightgbm_hyperparameters_with_mocked_splits(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_optimize_lightgbm_hyperparameters_with_mocked_splits(
+    monkeypatch: pytest.MonkeyPatch,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
+) -> None:
     """Validate that optimization runs end-to-end against mocked dataset splits.
 
     WHY: Guarantee the search logic remains functional when reading pre-split tabular data.
     """
-    rng = np.random.RandomState(0)
+    rng = random_state_factory(0)
     train_df = _make_mock_split(rng, 60)
     val_df = _make_mock_split(rng, 20)
     test_df = _make_mock_split(rng, 10)
@@ -106,8 +101,9 @@ def test_optimize_lightgbm_hyperparameters_with_mocked_splits(monkeypatch: pytes
 
 def test_optimize_lightgbm_handles_categorical_unseen_values(
     monkeypatch: pytest.MonkeyPatch,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
-    rng = np.random.RandomState(1)
+    rng = random_state_factory(1)
 
     train_df = pd.DataFrame({
         "color": [
@@ -225,8 +221,11 @@ def test_optimize_lightgbm_handles_categorical_unseen_values(
     assert any(-1 in df["city"].values for df in captured_val_inputs)
 
 
-def test_optimize_random_forest_hyperparameters_with_mocked_splits(monkeypatch: pytest.MonkeyPatch) -> None:
-    rng = np.random.RandomState(7)
+def test_optimize_random_forest_hyperparameters_with_mocked_splits(
+    monkeypatch: pytest.MonkeyPatch,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
+) -> None:
+    rng = random_state_factory(7)
     train_df = _make_mock_split(rng, 50, coeff_f1=1.5, coeff_f2=-0.25, noise_scale=0.05)
     val_df = _make_mock_split(rng, 18, coeff_f1=1.5, coeff_f2=-0.25, noise_scale=0.05)
     test_df = _make_mock_split(rng, 10, coeff_f1=1.5, coeff_f2=-0.25, noise_scale=0.05)
@@ -258,8 +257,11 @@ def test_optimize_random_forest_hyperparameters_with_mocked_splits(monkeypatch: 
         assert key in best_params
 
 
-def test_optimize_random_forest_handles_categorical(monkeypatch: pytest.MonkeyPatch) -> None:
-    rng = np.random.RandomState(11)
+def test_optimize_random_forest_handles_categorical(
+    monkeypatch: pytest.MonkeyPatch,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
+) -> None:
+    rng = random_state_factory(11)
 
     train_df = pd.DataFrame({
         "color": ["red", "blue", "green", "red", "blue", "green"],

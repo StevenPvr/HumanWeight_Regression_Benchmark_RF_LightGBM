@@ -10,7 +10,7 @@ keeps the test fast, deterministic, and self-contained.
 
 import json
 import os
-import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -18,13 +18,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-try:
-    from src.constants import TARGET_COLUMN
-except ModuleNotFoundError:  # pragma: no cover
-    project_root = Path(__file__).resolve().parent.parent
-    if str(project_root) not in sys.path:
-        sys.path.insert(0, str(project_root))
-    from src.constants import TARGET_COLUMN
+from src.constants import TARGET_COLUMN
 
 
 def test_e2e_pipeline(
@@ -32,13 +26,14 @@ def test_e2e_pipeline(
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
     caplog: pytest.LogCaptureFixture,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
     """Run the full pipeline end-to-end with mocks and assert artifacts exist."""
 
     # ----------------------------
     # 0) Synthetic data source
     # ----------------------------
-    rng = np.random.RandomState(123)
+    rng = random_state_factory(123)
     raw_df = pd.DataFrame(
         {
             "Weight (kg)": rng.normal(loc=70, scale=10, size=48),

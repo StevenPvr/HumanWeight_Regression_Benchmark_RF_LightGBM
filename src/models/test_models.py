@@ -1,25 +1,15 @@
 from __future__ import annotations
 
+from __future__ import annotations
+
+import pytest
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor
 
-import pytest
-
-try:
-    from .models import (
-        create_random_forest_regressor,
-        create_lightgbm_regressor,
-    )
-except ImportError:
-    # Allow running this test file directly without package context
-    import os
-    import sys
-
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from src.models.models import (
-        create_random_forest_regressor,
-        create_lightgbm_regressor,
-    )
+from src.models.models import (
+    create_lightgbm_regressor,
+    create_random_forest_regressor,
+)
 
 
 def test_create_random_forest_regressor_defaults() -> None:

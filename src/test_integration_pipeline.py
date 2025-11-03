@@ -3,15 +3,11 @@ from __future__ import annotations
 import json
 import logging
 import os
-import sys
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 from types import SimpleNamespace
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -34,12 +30,13 @@ def test_integration_pipeline_main_order(
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
     caplog: pytest.LogCaptureFixture,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
     # Step order: data_cleaning -> data_preparation -> hyperparameters_optimization -> feature_engineering -> training -> eval
     # NOTE: There is no 'models.main' in the repo; skipping that step.
 
     # 0) Synthetic data
-    rng = np.random.RandomState(42)
+    rng = random_state_factory(42)
     raw_df = _make_mock_df(40, rng)
 
     # ----------------------------

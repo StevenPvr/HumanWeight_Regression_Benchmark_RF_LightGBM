@@ -3,21 +3,16 @@ from __future__ import annotations
 import json
 import logging
 import os
-import sys
+from collections.abc import Callable
 from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 import pytest
 from lightgbm import LGBMRegressor
-import joblib
 
-try:
-    from .training import train_lightgbm_with_best_params
-except ImportError:
-    # Allow running this test file directly without package context
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from src.training.training import train_lightgbm_with_best_params
+from src.training.training import train_lightgbm_with_best_params
 
 from src.constants import DEFAULT_RANDOM_STATE, TARGET_COLUMN
 from src.utils import split_features_target, ensure_numeric_columns
@@ -48,8 +43,9 @@ def _make_mock_split(
 def test_train_random_forest_with_best_params_monkeypatched(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
-    rng = np.random.RandomState(0)
+    rng = random_state_factory(0)
     train_df = _make_mock_split(rng, 80)
     val_df = _make_mock_split(rng, 20)
     test_df = _make_mock_split(rng, 10)
@@ -119,8 +115,9 @@ def test_train_random_forest_with_best_params_monkeypatched(
 def test_save_random_forest_model_monkeypatched(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
-    rng = np.random.RandomState(1)
+    rng = random_state_factory(1)
     train_df = _make_mock_split(rng, 60)
     val_df = _make_mock_split(rng, 20)
     test_df = _make_mock_split(rng, 10)
@@ -175,6 +172,7 @@ def test_cli_main_trains_and_saves(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
     # Import here to ensure we patch the correct module symbols
     from src.training.main import main as cli_main
@@ -203,7 +201,7 @@ def test_cli_main_trains_and_saves(
         return expected_return_path
 
     # Provide a tiny validation set to allow CLI to compute MSE without touching FS
-    rng = np.random.RandomState(42)
+    rng = random_state_factory(42)
     df_train = _make_mock_split(rng, 10)
     df_val = _make_mock_split(rng, 5)
     df_test = _make_mock_split(rng, 5)
@@ -269,6 +267,7 @@ def test_cli_main_uses_defaults(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
     from src.training import main as main_module
     from src.training.main import main as cli_main
@@ -287,7 +286,7 @@ def test_cli_main_uses_defaults(
         def predict(self, X):
             return 2.0 * X["f1"].to_numpy() - 0.5 * X["f2"].to_numpy()
 
-    rng = np.random.RandomState(0)
+    rng = random_state_factory(0)
     df_train = _make_mock_split(rng, 12)
     df_val = _make_mock_split(rng, 6)
     df_test = _make_mock_split(rng, 6)
