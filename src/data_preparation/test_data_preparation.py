@@ -2,65 +2,75 @@
 
 from __future__ import annotations
 
-import sys
+from collections.abc import Callable
 from pathlib import Path
 
-project_root = Path(__file__).parent.parent.parent
-# WHY: enable direct pytest invocation without packaging by exposing project root for absolute imports
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
-
-
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 from src.data_preparation.data_preparation import (
     encode_categorical_variables,
     shuffle_data,
     split_train_val_test,
 )
-from src.utils import save_splits_with_marker, save_label_encoders_mappings
-from src.utils import proportional_allocation_indices
-from src.data_preparation.main import run_preparation_pipeline
 from src.constants import TARGET_COLUMN
+from src.data_preparation.main import run_preparation_pipeline
+from src.utils import (
+    proportional_allocation_indices,
+    save_label_encoders_mappings,
+    save_splits_with_marker,
+)
 
 
-def test_encode_categorical_variables() -> None:
-    """Test encoding of categorical variables with LabelEncoder."""
-    # Create mock data with categorical and numerical columns
-    mock_data = {
-        'age': [25, 30, 35, 40],
-        'gender': ['Male', 'Female', 'Male', 'Female'],
-        'workout-type': ['Cardio', 'HIIT', 'Strength', 'Cardio'],
-        'diet-type': ['Vegan', 'Paleo', 'Vegan', 'Vegetarian'],
-        'weight-(kg)': [70.5, 65.2, 80.1, 55.8]
-    }
-    df_mock = pd.DataFrame(mock_data)
+@pytest.fixture
+def categorical_dataframe() -> pd.DataFrame:
+    """Provide a tiny mixed-type dataset for encoding related tests."""
 
-    # Apply encoding
-    df_encoded, encoders = encode_categorical_variables(df_mock)
+    return pd.DataFrame(
+        {
+            "age": [25, 30, 35, 40],
+            "gender": ["Male", "Female", "Male", "Female"],
+            "workout-type": ["Cardio", "HIIT", "Strength", "Cardio"],
+            "diet-type": ["Vegan", "Paleo", "Vegan", "Vegetarian"],
+            "weight-(kg)": [70.5, 65.2, 80.1, 55.8],
+        }
+    )
 
-    # Check that categorical columns are encoded
-    assert df_encoded['gender'].dtype in [np.int32, np.int64]
-    assert df_encoded['workout-type'].dtype in [np.int32, np.int64]
-    assert df_encoded['diet-type'].dtype in [np.int32, np.int64]
 
-    # Check that numerical columns remain unchanged
-    assert df_encoded['age'].dtype == df_mock['age'].dtype
-    assert df_encoded['weight-(kg)'].dtype == df_mock['weight-(kg)'].dtype
+def test_encode_categorical_variables_encodes_object_columns(
+    categorical_dataframe: pd.DataFrame,
+) -> None:
+    """Categorical columns should become integer encoded with accompanying mappers."""
 
-    # Check that encoders are returned for categorical columns
-    assert 'gender' in encoders
-    assert 'workout-type' in encoders
-    assert 'diet-type' in encoders
-    assert 'age' not in encoders
-    assert 'weight-(kg)' not in encoders
+    encoded, encoders = encode_categorical_variables(categorical_dataframe)
 
-    # Check that encoding is reversible
-    assert list(encoders['gender'].inverse_transform(df_encoded['gender'])) == list(df_mock['gender'])
+    for column in ["gender", "workout-type", "diet-type"]:
+        assert column in encoders
+        assert pd.api.types.is_integer_dtype(encoded[column])
 
-    # Check that shape is preserved
-    assert df_encoded.shape == df_mock.shape
+
+def test_encode_categorical_variables_preserves_numeric_columns(
+    categorical_dataframe: pd.DataFrame,
+) -> None:
+    """Numeric columns should retain their dtype and values after encoding."""
+
+    encoded, _ = encode_categorical_variables(categorical_dataframe)
+
+    pd.testing.assert_series_equal(encoded["age"], categorical_dataframe["age"])
+    pd.testing.assert_series_equal(
+        encoded["weight-(kg)"], categorical_dataframe["weight-(kg)"]
+    )
+
+
+def test_encode_categorical_variables_inverse_transform_roundtrip(
+    categorical_dataframe: pd.DataFrame,
+) -> None:
+    """Encoded labels must be reversible via LabelEncoder mappings."""
+
+    encoded, encoders = encode_categorical_variables(categorical_dataframe)
+
+    recovered = encoders["gender"].inverse_transform(encoded["gender"])
+    assert recovered.tolist() == categorical_dataframe["gender"].tolist()
 
 
 def test_encode_categorical_variables_no_categorical() -> None:
@@ -183,10 +193,12 @@ def test_shuffle_data_resets_index() -> None:
     assert df_shuffled.index.tolist() == expected_index
 
 
-def test_split_train_val_test_basic_sizes_and_reproducibility() -> None:
+def test_split_train_val_test_basic_sizes_and_reproducibility(
+    random_state_factory: Callable[[int | None], np.random.RandomState]
+) -> None:
     """Train/val/test sizes follow 60/20/20 on 100 rows and are reproducible."""
     # Build deterministic DataFrame of 100 rows
-    rng = np.random.RandomState(42)
+    rng = random_state_factory(42)
     df = pd.DataFrame({
         'weight-(kg)': rng.normal(loc=70.0, scale=10.0, size=100),
         'age': rng.randint(18, 65, size=100),
@@ -208,9 +220,11 @@ def test_split_train_val_test_basic_sizes_and_reproducibility() -> None:
     pd.testing.assert_frame_equal(te1, te2)
 
 
-def test_split_train_val_test_preserves_total_and_tv_stratification() -> None:
+def test_split_train_val_test_preserves_total_and_tv_stratification(
+    random_state_factory: Callable[[int | None], np.random.RandomState]
+) -> None:
     """Total rows preserved and train/val are stratified without using test target."""
-    rng = np.random.RandomState(7)
+    rng = random_state_factory(7)
     weights = np.concatenate([
         rng.normal(60, 5, 40),
         rng.normal(70, 5, 40),
@@ -360,9 +374,11 @@ def test_save_label_encoders_mappings_empty(tmp_path: Path) -> None:
     assert len(df_csv) == 0
 
 
-def test_proportional_allocation_indices() -> None:
+def test_proportional_allocation_indices(
+    random_state_factory: Callable[[int | None], np.random.RandomState]
+) -> None:
     """Per-group allocation honors proportions with deterministic rounding."""
-    rng = np.random.RandomState(123)
+    rng = random_state_factory(123)
     # Two groups with different sizes to test rounding behavior
     groups = {
         0: np.arange(0, 8),   # size 8 → 6/2 with 0.75/0.25

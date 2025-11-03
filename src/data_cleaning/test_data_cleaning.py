@@ -2,14 +2,7 @@
 
 from __future__ import annotations
 
-
-import sys
 from pathlib import Path
-
-# Injecting the project root into sys.path keeps absolute imports functional during test runs.
-project_root = Path(__file__).parent.parent.parent
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
 
 import pandas as pd
 import pytest
@@ -74,16 +67,18 @@ def test_binarize_with_english_exercise_name() -> None:
     out = binarize_physical_exercise(df)
     assert out["physical-exercise"].tolist() == [0, 1, 1, 0]
 
-def test_save_cleaned_dataset(tmp_path: Path) -> None:
+def test_save_cleaned_dataset(tmp_path: Path, tiny_weight_dataframe: pd.DataFrame) -> None:
     """It should write both CSV and Parquet files with matching content."""
 
     # Using a temporary directory isolates file IO from the actual data folder during testing.
-    mock_df = pd.DataFrame({"age": [25, 30], "weight-kg": [70.5, 85.2]})
-
     output_dir = tmp_path / "exports"
     test_output_name = "test_output"
 
-    save_cleaned_dataset(mock_df, output_name=test_output_name, output_dir=output_dir)
+    save_cleaned_dataset(
+        tiny_weight_dataframe,
+        output_name=test_output_name,
+        output_dir=output_dir,
+    )
 
     csv_path = output_dir / f"{test_output_name}.csv"
     parquet_path = output_dir / f"{test_output_name}.parquet"
@@ -92,8 +87,8 @@ def test_save_cleaned_dataset(tmp_path: Path) -> None:
     loaded_csv = pd.read_csv(csv_path)
     loaded_parquet = pd.read_parquet(parquet_path)
 
-    assert loaded_csv.equals(mock_df)
-    assert loaded_parquet.equals(mock_df)
+    pd.testing.assert_frame_equal(loaded_csv, tiny_weight_dataframe)
+    pd.testing.assert_frame_equal(loaded_parquet, tiny_weight_dataframe)
 
 
 if __name__ == "__main__":

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 import json
 import logging
-import os
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -19,25 +19,14 @@ try:
 except Exception as exc:  # pragma: no cover - environment dependency
     pytest.skip(f"shap import failed: {exc}", allow_module_level=True)
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-from src.constants import (  # noqa: E402
+from src.constants import (
     DEFAULT_RANDOM_STATE,
     LIGHTGBM_SHAP_DIR,
     RANDOM_FOREST_SHAP_DIR,
     RELATIVE_SHAP_PLOTS_DIR,
     TARGET_COLUMN,
-)  # noqa: E402
-
-try:
-    from .eval import evaluate_lightgbm_on_test  # noqa: E402
-except ImportError:  # pragma: no cover - fallback for direct test execution
-    sys.path.insert(
-        0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    )
-    from src.eval.eval import evaluate_lightgbm_on_test  # noqa: E402
+)
+from src.eval.eval import evaluate_lightgbm_on_test
 
 
 def _make_linear_split(
@@ -57,10 +46,11 @@ def _make_linear_split(
 
 def test_evaluate_lightgbm_on_test_perfect_predictions(
     monkeypatch: pytest.MonkeyPatch,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
     """evaluation metrics are exact when the model reproduces the generator."""
 
-    rng = np.random.RandomState(123)
+    rng = random_state_factory(123)
     train_df = _make_linear_split(rng, 20)
     val_df = _make_linear_split(rng, 10)
     test_df = _make_linear_split(rng, 12)
@@ -318,11 +308,13 @@ def test_cli_eval_with_random_forest(
 
 
 def test_evaluate_lightgbm_on_test_with_shap(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
 ) -> None:
     """SHAP report contains signed impact stats and plot artefact."""
 
-    rng = np.random.RandomState(7)
+    rng = random_state_factory(7)
     train_df = _make_linear_split(rng, 20)
     val_df = _make_linear_split(rng, 10)
     test_df = _make_linear_split(rng, 8)

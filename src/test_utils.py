@@ -3,33 +3,22 @@ from __future__ import annotations
 import importlib
 import json
 import logging
-import os
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
-try:
-    from src.utils import (
-        read_best_params,
-        save_training_results,
-        fit_label_encoders_on_train,
-        assert_no_overlap_between_train_and_test,
-        round_columns,
-        prepare_train_val_numeric_splits,
-    )
-except ImportError:
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-    from src.utils import (
-        read_best_params,
-        save_training_results,
-        fit_label_encoders_on_train,
-        assert_no_overlap_between_train_and_test,
-        round_columns,
-        prepare_train_val_numeric_splits,
-    )
+from src.utils import (
+    assert_no_overlap_between_train_and_test,
+    fit_label_encoders_on_train,
+    prepare_train_val_numeric_splits,
+    read_best_params,
+    round_columns,
+    save_training_results,
+)
 
 
 def test_round_columns_one_decimal() -> None:
@@ -111,8 +100,11 @@ def test_fit_label_encoders_on_train_maps_unseen_to_negative_one() -> None:
     assert -1 in encoded_val["city"].values
 
 
-def test_prepare_train_val_numeric_splits_returns_numeric(monkeypatch: pytest.MonkeyPatch) -> None:
-    rng = np.random.RandomState(42)
+def test_prepare_train_val_numeric_splits_returns_numeric(
+    monkeypatch: pytest.MonkeyPatch,
+    random_state_factory: Callable[[int | None], np.random.RandomState],
+) -> None:
+    rng = random_state_factory(42)
     train_df = pd.DataFrame({
         "color": ["red", "blue", "green", "red"],
         "city": ["Paris", "Lyon", "Paris", "Nice"],
