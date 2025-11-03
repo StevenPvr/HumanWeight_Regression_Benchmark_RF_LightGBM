@@ -5,7 +5,6 @@ import json
 import logging
 import os
 import sys
-import types
 from pathlib import Path
 
 import numpy as np
