@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.constants import TARGET_COLUMN, DEFAULT_RANDOM_STATE
+from src.constants import TARGET_COLUMN, DEFAULT_RANDOM_STATE, RELATIVE_PLOTS_DIR
 
 try:
     from .eval import evaluate_lightgbm_on_test
@@ -94,11 +94,19 @@ def test_cli_eval_lightgbm_only(
         "residual_std": 0.2,
     }
     expected_shap_dir = PROJECT_ROOT / "plots" / "shape" / "LightGBM"
+    shap_plot_relative = str(
+        RELATIVE_PLOTS_DIR / "shape" / "LightGBM" / "lightgbm_shap_beeswarm.png"
+    )
     shap_payload = {
         "plot_path": str(expected_shap_dir / "lightgbm_shap_beeswarm.png"),
         "expected_value": 0.0,
         "feature_impacts": [],
     }
+    expected_saved_shap = {**shap_payload, "plot_path": shap_plot_relative}
+
+    lgbm_relative_plot = str(
+        RELATIVE_PLOTS_DIR / "shape" / "LightGBM" / "lightgbm_shap_beeswarm.png"
+    )
 
     def fake_eval(
         *,
@@ -154,7 +162,7 @@ def test_cli_eval_lightgbm_only(
     assert any("lightgbm_test_metrics.json" in message for message in messages)
     saved_report = json.loads((eval_dir / "lightgbm_test_metrics.json").read_text(encoding="utf-8"))
     assert saved_report["metrics"] == metrics_payload
-    assert saved_report["shap"] == shap_payload
+    assert saved_report["shap"] == expected_saved_shap
 
 
 def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -256,9 +264,21 @@ def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: 
     rf_json = json.loads((eval_dir / "random_forest_test_metrics.json").read_text(encoding="utf-8"))
     assert lgbm_json["metrics"] == lgbm_metrics
     assert rf_json["metrics"] == rf_metrics
-    assert lgbm_json["shap"]["plot_path"].endswith("LightGBM/lightgbm_shap_beeswarm.png")
-    assert lgbm_json["shap"]["expected_value"] == 1.0
-    assert lgbm_json["shap"]["feature_impacts"]
+    expected_lgbm_shap = {
+        "plot_path": lgbm_relative_plot,
+        "expected_value": 1.0,
+        "feature_impacts": [
+            {
+                "feature": "f1",
+                "max_positive": 0.2,
+                "max_negative": -0.3,
+                "positive_rate": 0.7,
+                "negative_rate": 0.3,
+                "max_intensity": 0.3,
+            }
+        ],
+    }
+    assert lgbm_json["shap"] == expected_lgbm_shap
     assert rf_json["shap"] is None
 
 

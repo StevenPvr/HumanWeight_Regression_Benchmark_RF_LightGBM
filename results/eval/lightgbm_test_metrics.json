@@ -1,6 +1,6 @@
 {
-  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/lightgbm.joblib",
-  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
+  "model_path": "results/models/lightgbm.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
   "target_column": "weight-(kg)",
   "metrics": {
     "mae": 0.7387944704798104,
@@ -15,7 +15,7 @@
     "residual_std": 1.1564703777828835
   },
   "shap": {
-    "plot_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/plots/shape/LightGBM/lightgbm_shap_beeswarm.png",
+    "plot_path": "plots/shape/LightGBM/lightgbm_shap_beeswarm.png",
     "expected_value": 73.79339574733287,
     "feature_impacts": [
       {

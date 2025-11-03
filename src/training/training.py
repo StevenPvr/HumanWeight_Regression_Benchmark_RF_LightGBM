@@ -10,7 +10,7 @@ and use the validation split with LightGBM early stopping based on MSE.
 from __future__ import annotations
 
 import logging
-import os
+from pathlib import Path
 
 import joblib
 import lightgbm as lgb  # type: ignore
@@ -24,6 +24,7 @@ from src.utils import (
     split_features_target,
     ensure_numeric_columns,
     read_best_params,
+    to_project_relative_path,
 )
 from src.models.models import create_lightgbm_regressor
 from src.constants import (
@@ -155,20 +156,18 @@ def save_lightgbm_model(
             ".joblib" extension is appended.
 
     Returns:
-        The absolute path to the saved model file.
+        Path to the saved model file relative to the project root when it lives
+        inside the repository, otherwise the absolute path.
     """
     if not isinstance(model, LGBMRegressor):
         raise TypeError("model must be LGBMRegressor")
 
-    # Ensure .joblib extension by default
-    if not model_path.lower().endswith((".joblib", ".pkl")):
-        model_path = f"{model_path}.joblib"
+    path_obj = Path(model_path).expanduser()
+    if path_obj.suffix.lower() not in {".joblib", ".pkl"}:
+        path_obj = path_obj.with_suffix(".joblib")
 
-    # Ensure destination directory exists
-    directory = os.path.dirname(model_path)
-    if directory:
-        os.makedirs(directory, exist_ok=True)
+    if path_obj.parent:
+        path_obj.parent.mkdir(parents=True, exist_ok=True)
 
-    # Persist model
-    joblib.dump(model, model_path)
-    return os.path.abspath(model_path)
+    joblib.dump(model, path_obj)
+    return str(to_project_relative_path(path_obj))

@@ -15,6 +15,11 @@ RESULTS_DIR: Path = PROJECT_ROOT / "results"
 PLOTS_DIR: Path = PROJECT_ROOT / "plots"
 PERMUTATION_PLOTS_DIR: Path = PLOTS_DIR / "permutation"
 
+# Relative paths (string-friendly) rooted at the repository
+RELATIVE_DATA_DIR: Path = Path("data")
+RELATIVE_RESULTS_DIR: Path = Path("results")
+RELATIVE_PLOTS_DIR: Path = Path("plots")
+
 # Default dataset/file names
 DEFAULT_INPUT_CLEANED_FILE: str = "dataset_cleaned_final.csv"
 DEFAULT_SPLITS_CSV_FILE: str = "dataset_splits_encoded.csv"

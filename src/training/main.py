@@ -62,6 +62,7 @@ from src.utils import (
     split_features_target,
     ensure_numeric_columns,
     get_logger,
+    to_project_relative_path,
 )
 
 
@@ -216,9 +217,9 @@ def save_lightgbm_summary(
     metrics_path = model_path.parent / f"{base_name}_metrics.json"
 
     summary_payload: dict[str, object] = {
-        "model_path": artifact_path,
-        "parquet_path": args.parquet,
-        "params_path": args.params,
+        "model_path": str(to_project_relative_path(artifact_path)),
+        "parquet_path": str(to_project_relative_path(args.parquet)),
+        "params_path": str(to_project_relative_path(args.params)),
         "target_column": args.target_column,
         "random_state": args.random_state,
         "validation": {"mse": validation_mse},
@@ -231,7 +232,10 @@ def save_lightgbm_summary(
         summary_payload["best_params"] = best_params
 
     save_training_results(summary_payload, str(metrics_path))
-    LOGGER.info("Training summary saved to %s", metrics_path)
+    LOGGER.info(
+        "Training summary saved to %s",
+        to_project_relative_path(metrics_path),
+    )
 
 
 def save_random_forest_summary(
@@ -247,9 +251,9 @@ def save_random_forest_summary(
     rf_base = Path(artifact_path).stem
     rf_metrics_path = Path(artifact_path).parent / f"{rf_base}_metrics.json"
     rf_summary: dict[str, object] = {
-        "model_path": artifact_path,
-        "parquet_path": args.parquet,
-        "params_path": args.rf_params,
+        "model_path": str(to_project_relative_path(artifact_path)),
+        "parquet_path": str(to_project_relative_path(args.parquet)),
+        "params_path": str(to_project_relative_path(args.rf_params)),
         "target_column": args.target_column,
         "random_state": args.random_state,
         "validation": {"mse": validation_mse},
@@ -258,7 +262,10 @@ def save_random_forest_summary(
         "best_params": best_params,
     }
     save_training_results(rf_summary, str(rf_metrics_path))
-    LOGGER.info("RandomForest training summary saved to %s", rf_metrics_path)
+    LOGGER.info(
+        "RandomForest training summary saved to %s",
+        to_project_relative_path(rf_metrics_path),
+    )
 
 
 def run_lightgbm_stage(

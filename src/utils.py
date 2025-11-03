@@ -9,6 +9,7 @@ import logging
 import os
 import json
 import sys
+from pathlib import Path
 from typing import Dict, Sequence, Any, cast
 
 import pandas as pd
@@ -20,6 +21,8 @@ import numpy as np
 from tqdm.auto import tqdm
 from joblib import Parallel, delayed, parallel
 from contextlib import contextmanager
+
+from src.constants import PROJECT_ROOT
 
 
 _LOGGER_CONFIGURED = False
@@ -449,6 +452,22 @@ def read_best_params(params_json_path: str) -> dict[str, Any]:
     return best_params
 
 
+def to_project_relative_path(path: str | Path) -> Path:
+    """Return ``path`` relative to the repository root when possible.
+
+    WHY: Persisting absolute paths makes artifacts machine-specific. Converting
+    them to project-relative strings keeps results stable across environments
+    while still resolving to an absolute location when the path lies outside the
+    repository tree (e.g., temporary directories in tests).
+    """
+
+    resolved_path = Path(path).expanduser().resolve()
+    try:
+        return resolved_path.relative_to(PROJECT_ROOT)
+    except ValueError:
+        return resolved_path
+
+
 def save_training_results(results: dict[str, Any], json_path: str) -> str:
     """Persist training metrics and metadata to JSON.
 
@@ -460,7 +479,8 @@ def save_training_results(results: dict[str, Any], json_path: str) -> str:
         json_path: Destination file path. Parent directories are created if missing.
 
     Returns:
-        Absolute path to the saved JSON file.
+        Path to the saved JSON file relative to the project root when the file
+        lives inside the repository, otherwise the absolute path.
 
     Raises:
         ValueError: If ``results`` is empty.
@@ -468,14 +488,14 @@ def save_training_results(results: dict[str, Any], json_path: str) -> str:
     if not results:
         raise ValueError("results payload cannot be empty")
 
-    directory = os.path.dirname(json_path)
-    if directory:
-        os.makedirs(directory, exist_ok=True)
+    path_obj = Path(json_path).expanduser()
+    if path_obj.parent:
+        path_obj.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(json_path, "w", encoding="utf-8") as handle:
+    with path_obj.open("w", encoding="utf-8") as handle:
         json.dump(results, handle, ensure_ascii=False, indent=2)
 
-    return os.path.abspath(json_path)
+    return str(to_project_relative_path(path_obj))
 
 
 def assert_no_overlap_between_train_and_test(

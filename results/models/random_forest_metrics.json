@@ -1,7 +1,7 @@
 {
-  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/random_forest.joblib",
-  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
-  "params_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/best_random_forest_params.json",
+  "model_path": "results/models/random_forest.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
+  "params_path": "results/best_random_forest_params.json",
   "target_column": "weight-(kg)",
   "random_state": 123,
   "validation": {

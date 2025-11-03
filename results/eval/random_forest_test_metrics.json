@@ -1,6 +1,6 @@
 {
-  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/random_forest.joblib",
-  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
+  "model_path": "results/models/random_forest.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
   "target_column": "weight-(kg)",
   "metrics": {
     "mae": 0.518716607156941,
