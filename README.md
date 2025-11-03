@@ -1,20 +1,69 @@
 # Weigh LifeStyle — Prédiction du poids (LightGBM & RandomForest)
 
-Projet de régression qui lie hygiène de vie et poids corporel. Les notebooks fournissent l'EDA initiale tandis que la pipeline automatisée gère nettoyage, splits, tuning Optuna, entraînement et évaluation (métriques + SHAP).
+Projet de régression qui relie hygiène de vie et poids corporel. Les notebooks fournissent l'EDA initiale tandis que la pipeline automatisée gère nettoyage, splits, tuning Optuna, entraînement et évaluation (métriques + SHAP).
 
 ## Objectifs
 - Obtenir un pipeline reproductible sans fuite de données du test.
-pip install -r requirements-dev.txt
 - Pinner l'entraînement LightGBM avec un jeu d'hyperparamètres consigné.
 - Conserver tous les artefacts (données dérivées, modèles, graphiques) dans le dépôt pour audit.
 
-## Flux de données
-1. `data/dataset.csv` → notebooks → `data/dataset_cleaned.csv`.
-2. `dataset_cleaned.csv` → script de nettoyage → `data/dataset_cleaned_final.(csv|parquet)`.
-3. `dataset_cleaned_final` → préparation → `data/dataset_splits_encoded.(csv|parquet)` + mappings.
-4. Splits encodés → feature importance, hyperparameter search, entraînement et évaluation.
+## Configuration de l’environnement
+Prérequis : Python 3.10+.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows : .venv\Scripts\activate
+pip install -r requirements.txt
+# Dépendances supplémentaires pour les tests et linters
+pip install -r requirements-dev.txt
+```
+
+> 💡 Les scripts CLI sont exécutables sans installation du paquet grâce à l’injection du `PROJECT_ROOT` dans `sys.path`. Aucune variable d’environnement spécifique n’est nécessaire.
+
+## Conventions & respect des instructions
+- Les règles globales (PEP 8, KISS, DRY, type hints…) sont décrites dans `AGENTS.md` à la racine. Toute modification de code ou de documentation doit en tenir compte.
+- Les chemins sont dérivés de `src/constants.py` : utiliser `PROJECT_ROOT`, `DATA_DIR`, `RESULTS_DIR`, etc., au lieu de concaténations manuelles.
+- Pour la journalisation, remplacer tout `print` par `get_logger(__name__)` depuis `src.utils`.
+
+## Flux de travail recommandé
+### 1. Préparer les données sources
+- Déposer le CSV brut dans `data/dataset.csv`.
+- (Optionnel) Mettre à jour les notebooks si de nouvelles colonnes apparaissent.
+
+### 2. Exécuter les notebooks d’EDA
+- `notebooks/analyse_univariee.ipynb` : distribs, valeurs extrêmes, export `data/dataset_cleaned.csv`.
+- `notebooks/analyse_bivariee_multivariee.ipynb` : corrélations, scatterplots, profils catégoriels.
+- Sauvegarder les visualisations dans `plots/` pour conserver l’historique.
+
+### 3. Lancer les scripts CLI
+| Étape | Commande | Entrées | Sorties clés |
+|-------|----------|---------|--------------|
+| Nettoyage | `python -m src.data_cleaning.main` | `data/dataset_cleaned.csv` | `data/dataset_cleaned_final.(csv|parquet)`, plot de distribution |
+| Préparation | `python -m src.data_preparation.main` | Fichier nettoyé final | Splits encodés + mappings LabelEncoder |
+| Hyperparamètres | `python -m src.hyperparameters_optimization.main --models both` | Splits encodés | `results/best_lightgbm_params.json`, `results/best_random_forest_params.json` |
+| Feature importance | `python -m src.feature_engineering.main` | Splits encodés | JSON + graphique de permutation |
+| Entraînement | `python -m src.training.main --models both` | Splits encodés + JSON d’hyperparamètres | `results/models/*.joblib` + métriques validation |
+| Évaluation | `python -m src.eval.main --models both` | Splits encodés + modèles | `results/eval/*.json`, rapports SHAP |
+| End-to-end | `python -m src.main_global` | Orchestrateur | Enchaînement complet |
+
+Les chemins par défaut des arguments CLI proviennent tous de `src/constants.py`. Les artefacts écrits lors du run sont automatiquement convertis en chemins relatifs via `src.utils.to_project_relative_path`, ce qui facilite le versioning.
+
+### 4. Tests et vérifications
+- `pytest` : exécute les tests unitaires et d’intégration.
+- `pytest -k e2e` : rejoue le test end-to-end à partir des fixtures mockées.
+- `python -m src.main_global` : smoke test manuel sur les fichiers présents dans `data/`.
+
+### 5. Gestion des résultats
+- Modèles sauvegardés dans `results/models/` (LightGBM et RandomForest).
+- Métriques finales dans `results/eval/` (JSON) et SHAP dans `plots/shape/`.
+- Les mappings d’encodage et splits restent dans `data/` pour rejouer la pipeline.
 
 Chaque étape est détaillée dans `documentation/methodologie.txt`.
+
+## Gestion centralisée des chemins
+- `src/constants.py` définit les répertoires (`DATA_DIR`, `RESULTS_DIR`, `PLOTS_DIR`, etc.) et les noms de fichiers par défaut.
+- `src.utils.to_project_relative_path` garantit que les chemins stockés dans les JSON sont relatifs (ex. `results/models/lightgbm.joblib`).
+- Les scripts vérifient/créent les dossiers parents nécessaires avant d’écrire un fichier.
 
 ## Structure du dépôt
 
@@ -38,37 +87,7 @@ documentation/rf_results.md      # Synthèse JSON RandomForest prête à lire
 
 ```
 
-## Installation
-Prérequis : Python 3.10+.
-
-```
-python -m venv .venv
-source .venv/bin/activate  # Windows : .venv\Scripts\activate
-pip install -r requirements.txt
-# Optionnel pour tests/typing :
-
-```
-
-Les dépendances couvrent LightGBM, Optuna, SHAP, Matplotlib/Seaborn (EDA & plots) et scikit-learn.
-
-## Notebooks d'EDA
-- `notebooks/analyse_univariee.ipynb` : distribs, valeurs extrêmes, export `dataset_cleaned.csv`.
-- `notebooks/analyse_bivariee_multivariee.ipynb` : corrélations, scatterplots, profils catégoriels.
-
-Rerun lorsque la structure des données évolue afin de maintenir les exports cohérents.
-
-## Pipeline CLI
-Les étapes peuvent être lancées individuellement ou via l'orchestrateur global.
-
-| Étape | Commande | Sorties clés |
-|-------|----------|--------------|
-| Nettoyage | `python -m src.data_cleaning.main` | `data/dataset_cleaned_final.(csv|parquet)`, plot de distribution |
-| Préparation | `python -m src.data_preparation.main` | Splits encodés + mappings LabelEncoder |
-| Hyperparamètres | `python -m src.hyperparameters_optimization.main --models both` | `results/best_lightgbm_params.json`, `results/best_random_forest_params.json` |
-| Feature importance | `python -m src.feature_engineering.main` | JSON + graphique de permutation |
-| Entraînement | `python -m src.training.main --models both` | `results/models/*.joblib` + métriques validation |
-| Évaluation | `python -m src.eval.main --models both` | `results/eval/*.json`, rapports SHAP |
-| End-to-end | `python -m src.main_global` | Enchaînement complet |
+Les dépendances couvrent LightGBM, Optuna, SHAP, Matplotlib/Seaborn (EDA & plots) et scikit-learn. Pour l’analyse statique, `requirements-dev.txt` fournit `black`, `ruff` et `pytest`.
 
 Le tuning Optuna se fait sur un split train/val fixe (pas de CV) afin de limiter le temps de calcul tout en gardant le test hermétique.
 
@@ -93,6 +112,11 @@ Le tuning Optuna se fait sur un split train/val fixe (pas de CV) afin de limiter
 
 - **Features les plus importantes** (SHAP) : `water-intake-(liters)`, `cholesterol-mg`, `age`, `session-duration-(hours)`.
 - **Visualisations** : métriques + SHAP enregistrés sous `results/eval/` et `plots/shape/`.
+
+## Changements récents
+- Normalisation des chemins via `src.constants` et `to_project_relative_path` pour éviter tout chemin absolu dans les artefacts.
+- Ajout d’options `--models` sur les CLI `training` et `eval` afin de sélectionner LightGBM, RandomForest ou les deux.
+- Harmonisation des tests d’intégration (`pytest`) autour de jeux de données synthétiques.
 
 ## Reproductibilité
 - Seeds centralisés dans `src/constants.py` (`DEFAULT_RANDOM_STATE`).

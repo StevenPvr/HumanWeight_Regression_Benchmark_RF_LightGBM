@@ -5,6 +5,8 @@
 - `results/models/lightgbm_metrics.json`
 - `results/eval/lightgbm_test_metrics.json`
 
+Tous les chemins enregistrés sont désormais relatifs au projet grâce à `src.utils.to_project_relative_path`.
+
 ## Hyperparameter Optimisation
 ```json
 {
@@ -34,9 +36,9 @@
 ## Training Metadata
 ```json
 {
-  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/lightgbm.joblib",
-  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
-  "params_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/best_lightgbm_params.json",
+  "model_path": "results/models/lightgbm.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
+  "params_path": "results/best_lightgbm_params.json",
   "target_column": "weight-(kg)",
   "random_state": 123,
   "validation": {
@@ -61,8 +63,8 @@
 ## Test Set Evaluation
 ```json
 {
-  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/lightgbm.joblib",
-  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
+  "model_path": "results/models/lightgbm.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
   "target_column": "weight-(kg)",
   "metrics": {
     "mae": 0.7387944704798104,
@@ -75,5 +77,38 @@
     "y_std": 21.275535405643144,
     "pred_std": 20.859328166811448,
     "residual_std": 1.1564703777828835
+  },
+  "shap": {
+    "plot_path": "plots/shape/LightGBM/lightgbm_shap_beeswarm.png",
+    "expected_value": 73.79339574733287,
+    "feature_impacts": [
+      {
+        "feature": "water-intake-(liters)",
+        "max_positive": 15.229419915323632,
+        "max_negative": -13.193814021899033,
+        "positive_rate": 0.42225,
+        "negative_rate": 0.57775,
+        "max_intensity": 15.229419915323632
+      },
+      {
+        "feature": "cholesterol-mg",
+        "max_positive": 11.118093096810686,
+        "max_negative": -5.813236885093438,
+        "positive_rate": 0.48025,
+        "negative_rate": 0.51975,
+        "max_intensity": 11.118093096810686
+      },
+      {
+        "feature": "age",
+        "max_positive": 9.191505977124935,
+        "max_negative": -5.5631808658071735,
+        "positive_rate": 0.483,
+        "negative_rate": 0.517,
+        "max_intensity": 9.191505977124935
+      }
+    ]
   }
+}
 ```
+
+> ℹ️ Les listes complètes de `feature_impacts` et des métriques sont disponibles dans les JSON versionnés. Les extraits ci-dessus résument les valeurs essentielles tout en illustrant les chemins relatifs.

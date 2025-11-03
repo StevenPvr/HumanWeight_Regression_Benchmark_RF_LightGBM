@@ -5,6 +5,8 @@
 - `results/models/random_forest_metrics.json`
 - `results/eval/random_forest_test_metrics.json`
 
+Tous les chemins sont stockés relativement au dépôt (`results/...`, `data/...`).
+
 ## Hyperparameter Optimisation
 ```json
 {
@@ -31,9 +33,9 @@
 ## Training Metadata
 ```json
 {
-  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/random_forest.joblib",
-  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
-  "params_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/best_random_forest_params.json",
+  "model_path": "results/models/random_forest.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
+  "params_path": "results/best_random_forest_params.json",
   "target_column": "weight-(kg)",
   "random_state": 123,
   "validation": {
@@ -55,8 +57,8 @@
 ## Test Set Evaluation
 ```json
 {
-  "model_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/results/models/random_forest.joblib",
-  "parquet_path": "/Users/steven/Documents/Programmation/Weigh_LifeStyle/data/dataset_splits_encoded.parquet",
+  "model_path": "results/models/random_forest.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
   "target_column": "weight-(kg)",
   "metrics": {
     "mae": 0.518716607156941,
@@ -73,3 +75,5 @@
   "shap": null
 }
 ```
+
+> 🔍 Les scripts `training` et `eval` partagent la même logique de conversion de chemins que LightGBM. Si un calcul SHAP Random Forest est ajouté ultérieurement, il apparaîtra sous `plots/shape/rf/`.
