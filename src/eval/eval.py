@@ -24,7 +24,13 @@ from sklearn.metrics import (
 )
 
 from src.constants import TARGET_COLUMN, DEFAULT_RANDOM_STATE
-from src.utils import get_logger, load_splits_from_parquet, split_features_target, ensure_numeric_columns
+from src.utils import (
+    get_logger,
+    load_splits_from_parquet,
+    split_features_target,
+    ensure_numeric_columns,
+    to_project_relative_path,
+)
 
 LOGGER = get_logger(__name__)
 
@@ -90,7 +96,7 @@ def generate_shap_report(
     base_values = np.asarray(shap_values.base_values, dtype=float)
     expected_value = float(np.mean(base_values)) if base_values.size else 0.0
     return {
-        "plot_path": str(plot_path),
+        "plot_path": str(to_project_relative_path(plot_path)),
         "expected_value": expected_value,
         "feature_impacts": summary,
     }

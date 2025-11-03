@@ -28,6 +28,7 @@ from src.utils import (
     load_splits_from_parquet,
     save_training_results,
     get_logger,
+    to_project_relative_path,
 )
 
 # WHY: Re-export utility helpers so integration tests can monkeypatch them here.
@@ -191,9 +192,14 @@ def evaluate_model_and_record(
         return {}, ""
     metrics = raw_metrics.copy()
     shap_payload = metrics.pop("shap", None)
+    if isinstance(shap_payload, dict) and "plot_path" in shap_payload:
+        shap_payload = {
+            **shap_payload,
+            "plot_path": str(to_project_relative_path(shap_payload["plot_path"])),
+        }
     summary = {
-        "model_path": str(model_path),
-        "parquet_path": args.parquet,
+        "model_path": str(to_project_relative_path(model_path)),
+        "parquet_path": str(to_project_relative_path(args.parquet)),
         "target_column": args.target_column,
         "metrics": metrics,
         "shap": shap_payload,
