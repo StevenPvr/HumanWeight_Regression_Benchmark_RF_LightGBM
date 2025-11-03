@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Tuple
+from pathlib import Path
+from typing import Any
 
+import lightgbm as lgb  # type: ignore
+import numpy as np
 import optuna
 from optuna.samplers import TPESampler
-import numpy as np
 from sklearn.metrics import mean_squared_error
 
 from src.constants import (
@@ -12,18 +14,20 @@ from src.constants import (
     HYPEROPT_DEFAULT_N_TRIALS,
     HYPEROPT_LGBM_EARLY_STOPPING_ROUNDS,
 )
+from src.models.models import (
+    create_lightgbm_regressor,
+    create_random_forest_regressor,
+)
 from src.utils import prepare_train_val_numeric_splits
-from src.models.models import create_lightgbm_regressor, create_random_forest_regressor
-import lightgbm as lgb  # type: ignore
 
 
 def optimize_lightgbm_hyperparameters(
-    parquet_path: str,
+    parquet_path: Path,
     target_column: str,
     *,
     n_trials: int = HYPEROPT_DEFAULT_N_TRIALS,
     random_state: int = DEFAULT_RANDOM_STATE,
-) -> Tuple[Dict[str, Any], float, Dict[str, float]]:
+) -> tuple[dict[str, Any], float, dict[str, float]]:
     """
     Optimize LightGBM hyperparameters using a single train/validation split.
 
@@ -39,6 +43,7 @@ def optimize_lightgbm_hyperparameters(
             - best_value: minimal validation MSE achieved.
             - val_summary: {"val_mse": best_value} for convenience.
     """
+    parquet_path = Path(parquet_path)
     train_data, val_data = prepare_train_val_numeric_splits(parquet_path, target_column)
     train_features, y_train = train_data
     val_features, y_val = val_data
@@ -47,6 +52,7 @@ def optimize_lightgbm_hyperparameters(
     # Reduce Optuna logger noise to only warnings and errors.
     # WHY: HPO runs are iterative; excessive INFO logs clutter the console.
     optuna.logging.set_verbosity(optuna.logging.WARNING)
+
     # Silence LightGBM's internal logger during optimization to avoid noisy C++ logs.
     # WHY: Messages like "No further splits with positive gain" are not actionable here.
     class _SilentLogger:
@@ -64,8 +70,8 @@ def optimize_lightgbm_hyperparameters(
     lgb.register_logger(_SilentLogger())
 
     def objective(trial: optuna.Trial) -> float:
-    # WHY: Keep search simple yet elastic enough for high-trial Optuna runs
-        params: Dict[str, Any] = {
+        # WHY: Keep search simple yet elastic enough for high-trial Optuna runs
+        params: dict[str, Any] = {
             # WHY: 100-trial budget merits wider ensembles to surface high-capacity fits
             "n_estimators": trial.suggest_int("n_estimators", 200, 2000),
             "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.3, log=True),
@@ -112,7 +118,9 @@ def optimize_lightgbm_hyperparameters(
         mse = float(mean_squared_error(np.asarray(y_val), np.asarray(y_pred)))
         return mse
 
-    study = optuna.create_study(direction="minimize", sampler=TPESampler(seed=random_state))
+    study = optuna.create_study(
+        direction="minimize", sampler=TPESampler(seed=random_state)
+    )
     # Show Optuna progress bar by default while keeping logs minimal.
     study.optimize(objective, n_trials=n_trials, show_progress_bar=True)
 
@@ -120,18 +128,18 @@ def optimize_lightgbm_hyperparameters(
     if best_value is None:
         raise RuntimeError("Optuna study completed but best_trial.value is None.")
 
-    best_params: Dict[str, Any] = study.best_trial.params
+    best_params: dict[str, Any] = study.best_trial.params
     val_summary = {"val_mse": float(best_value)}
     return best_params, float(best_value), val_summary
 
 
 def optimize_random_forest_hyperparameters(
-    parquet_path: str,
+    parquet_path: Path,
     target_column: str,
     *,
     n_trials: int = HYPEROPT_DEFAULT_N_TRIALS,
     random_state: int = DEFAULT_RANDOM_STATE,
-) -> Tuple[Dict[str, Any], float, Dict[str, float]]:
+) -> tuple[dict[str, Any], float, dict[str, float]]:
     """
     Optimize RandomForest hyperparameters using a single train/validation split.
 
@@ -152,6 +160,7 @@ def optimize_random_forest_hyperparameters(
         avoid invariant `Dict` variance issues flagged by type checkers and to
         maintain a simple, consistent contract.
     """
+    parquet_path = Path(parquet_path)
     train_data, val_data = prepare_train_val_numeric_splits(parquet_path, target_column)
     train_features, y_train = train_data
     val_features, y_val = val_data
@@ -160,14 +169,16 @@ def optimize_random_forest_hyperparameters(
     optuna.logging.set_verbosity(optuna.logging.WARNING)
 
     def objective(trial: optuna.Trial) -> float:
-    # WHY: Mirror LightGBM expansion so forests can scale with the larger trial budget
-        params: Dict[str, Any] = {
+        # WHY: Mirror LightGBM expansion so forests can scale with the larger trial budget
+        params: dict[str, Any] = {
             # WHY: Expand ranges so 100 Optuna trials can explore heavier ensembles too
             "n_estimators": trial.suggest_int("n_estimators", 200, 2000),
             "max_depth": trial.suggest_int("max_depth", 4, 40),
             "min_samples_split": trial.suggest_int("min_samples_split", 2, 40),
             "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 40),
-            "max_features": trial.suggest_float("max_features", 0.2, 1.0),  # fraction of features
+            "max_features": trial.suggest_float(
+                "max_features", 0.2, 1.0
+            ),  # fraction of features
             "bootstrap": trial.suggest_categorical("bootstrap", [True, False]),
             "n_jobs": -1,
             "random_state": random_state,
@@ -182,14 +193,16 @@ def optimize_random_forest_hyperparameters(
         mse = float(mean_squared_error(np.asarray(y_val), np.asarray(y_pred)))
         return mse
 
-    study = optuna.create_study(direction="minimize", sampler=TPESampler(seed=random_state))
+    study = optuna.create_study(
+        direction="minimize", sampler=TPESampler(seed=random_state)
+    )
     study.optimize(objective, n_trials=n_trials, show_progress_bar=True)
 
     best_value = study.best_trial.value
     if best_value is None:
         raise RuntimeError("Optuna study completed but best_trial.value is None.")
 
-    best_params: Dict[str, Any] = study.best_trial.params
+    best_params: dict[str, Any] = study.best_trial.params
     val_summary = {"val_mse": float(best_value)}
 
     return best_params, float(best_value), val_summary

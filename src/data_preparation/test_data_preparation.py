@@ -1,5 +1,6 @@
 """Unit tests for data preparation module."""
 
+from __future__ import annotations
 
 import sys
 from pathlib import Path
@@ -279,7 +280,7 @@ def test_save_splits_with_marker_csv(tmp_path: Path) -> None:
     csv_path = tmp_path / "joined.csv"
     parquet_path = tmp_path / "joined.parquet"
 
-    save_splits_with_marker(train, val, test, str(csv_path), str(parquet_path))
+    save_splits_with_marker(train, val, test, csv_path, parquet_path)
 
     assert csv_path.exists()
     df_csv = pd.read_csv(csv_path)
@@ -298,7 +299,7 @@ def test_save_splits_with_marker_parquet_optional(tmp_path: Path) -> None:
     parquet_path = tmp_path / "j.parquet"
 
     try:
-        save_splits_with_marker(train, val, test, str(csv_path), str(parquet_path))
+        save_splits_with_marker(train, val, test, csv_path, parquet_path)
         df_pq = pd.read_parquet(parquet_path)  # may raise if engine missing
     except Exception as exc:  # engine may be missing in some environments
         pytest.skip(f"Parquet engine not available: {exc}")
@@ -319,7 +320,7 @@ def test_save_label_encoders_mappings(tmp_path: Path) -> None:
     json_path = tmp_path / 'encoders.json'
     csv_path = tmp_path / 'encoders.csv'
 
-    save_label_encoders_mappings(encoders, str(json_path), str(csv_path))
+    save_label_encoders_mappings(encoders, json_path, csv_path)
 
     # JSON assertions
     import json

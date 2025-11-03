@@ -415,8 +415,8 @@ def test_e2e_pipeline(
     monkeypatch.setattr(
         "src.eval.main.save_training_results",
         lambda payload, json_path: (
-            os.makedirs(os.path.dirname(json_path), exist_ok=True),
-            Path(json_path).write_text(json.dumps(payload), encoding="utf-8"),
+            json_path.parent.mkdir(parents=True, exist_ok=True),
+            json_path.write_text(json.dumps(payload), encoding="utf-8"),
             json_path,
         )[-1],
     )

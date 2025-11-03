@@ -54,7 +54,7 @@ def test_train_random_forest_with_best_params_monkeypatched(
     val_df = _make_mock_split(rng, 20)
     test_df = _make_mock_split(rng, 10)
 
-    def fake_loader(_path: str):
+    def fake_loader(_path: Path):
         return train_df, val_df, test_df
 
     # Mock dataset loading to avoid filesystem dependency
@@ -93,8 +93,8 @@ def test_train_random_forest_with_best_params_monkeypatched(
         json.dump(params, f)
 
     model = train_lightgbm_with_best_params(
-        parquet_path="/does/not/matter.parquet",
-        params_json_path=str(json_path),
+        parquet_path=Path("/does/not/matter.parquet"),
+        params_json_path=json_path,
         target_column=TARGET_COLUMN,
         random_state=DEFAULT_RANDOM_STATE,
     )
@@ -125,7 +125,7 @@ def test_save_random_forest_model_monkeypatched(
     val_df = _make_mock_split(rng, 20)
     test_df = _make_mock_split(rng, 10)
 
-    def fake_loader(_path: str):
+    def fake_loader(_path: Path):
         return train_df, val_df, test_df
 
     # Patch the symbol as imported into the module under test
@@ -146,8 +146,8 @@ def test_save_random_forest_model_monkeypatched(
 
     # Train a model
     model = train_lightgbm_with_best_params(
-        parquet_path="/unused.parquet",
-        params_json_path=str(params_path),
+        parquet_path=Path("/unused.parquet"),
+        params_json_path=params_path,
         target_column=TARGET_COLUMN,
         random_state=DEFAULT_RANDOM_STATE,
     )
@@ -181,14 +181,14 @@ def test_cli_main_trains_and_saves(
 
     called = {"train": False, "save": False, "summary": False}
 
-    expected_parquet = "dummy.parquet"
-    expected_params = str(tmp_path / "params.json")
+    expected_parquet = Path("dummy.parquet")
+    expected_params = tmp_path / "params.json"
     expected_target = TARGET_COLUMN
     expected_seed = DEFAULT_RANDOM_STATE
     out_base = tmp_path / "out" / "rf_model"
     expected_return_path = str(out_base.with_suffix(".joblib"))
 
-    def fake_train(parquet_path: str, params_json_path: str, *, target_column: str, random_state: int):
+    def fake_train(parquet_path: Path, params_json_path: Path, *, target_column: str, random_state: int):
         assert parquet_path == expected_parquet
         assert params_json_path == expected_params
         assert target_column == expected_target
@@ -218,16 +218,16 @@ def test_cli_main_trains_and_saves(
         fake_train(*args, **kwargs)
         return _Model()
 
-    def fake_loader(_path: str):
+    def fake_loader(_path: Path):
         return df_train, df_val, df_test
 
-    def fake_read_params(path: str):
+    def fake_read_params(path: Path):
         assert path == expected_params
         return {"n_estimators": 64}
 
-    def fake_save_summary(payload: dict, json_path: str) -> str:
+    def fake_save_summary(payload: dict, json_path: Path) -> Path:
         expected_path = out_base.parent / "rf_model_metrics.json"
-        assert Path(json_path) == expected_path
+        assert json_path == expected_path
         assert payload["model_path"] == expected_return_path
         # Validation MSE should be computed from the final model
         assert isinstance(payload["validation"]["mse"], float)
@@ -250,8 +250,8 @@ def test_cli_main_trains_and_saves(
     caplog.set_level(logging.INFO, logger="src.training.main")
 
     rc = cli_main([
-        "--parquet", expected_parquet,
-        "--params", expected_params,
+        "--parquet", str(expected_parquet),
+        "--params", str(expected_params),
         "--out", str(out_base),
         "--target-column", expected_target,
         "--random-state", str(expected_seed),
@@ -292,13 +292,13 @@ def test_cli_main_uses_defaults(
     df_val = _make_mock_split(rng, 6)
     df_test = _make_mock_split(rng, 6)
 
-    def fake_loader(path: str):
-        assert Path(path) == default_parquet
+    def fake_loader(path: Path):
+        assert path == default_parquet
         return df_train, df_val, df_test
 
-    def fake_train(parquet_path: str, params_json_path: str, *, target_column: str, random_state: int):
-        assert Path(parquet_path) == default_parquet
-        assert Path(params_json_path) == default_params
+    def fake_train(parquet_path: Path, params_json_path: Path, *, target_column: str, random_state: int):
+        assert parquet_path == default_parquet
+        assert params_json_path == default_params
         assert target_column == TARGET_COLUMN
         assert random_state == DEFAULT_RANDOM_STATE
         called["train"] = True
@@ -310,13 +310,13 @@ def test_cli_main_uses_defaults(
         called["save"] = True
         return str(default_out.with_suffix(".joblib"))
 
-    def fake_read_params(path: str):
-        assert Path(path) == default_params
+    def fake_read_params(path: Path):
+        assert path == default_params
         return {"n_estimators": 32}
 
-    def fake_save_summary(payload: dict, json_path: str) -> str:
+    def fake_save_summary(payload: dict, json_path: Path) -> Path:
         expected_path = default_out.parent / "lightgbm_metrics.json"
-        assert Path(json_path) == expected_path
+        assert json_path == expected_path
         assert payload["model_path"] == str(default_out.with_suffix(".joblib"))
         assert isinstance(payload["validation"]["mse"], float)
         assert payload["validation"]["mse"] >= 0.0

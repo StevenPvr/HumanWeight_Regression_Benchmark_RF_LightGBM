@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from sklearn.ensemble import RandomForestRegressor
 from lightgbm import LGBMRegressor
+from sklearn.ensemble import RandomForestRegressor
+
+from src.constants import DEFAULT_RANDOM_STATE
 
 
-def create_random_forest_regressor(random_state: int = 123) -> RandomForestRegressor:
+def create_random_forest_regressor(
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> RandomForestRegressor:
     """
     Create a RandomForestRegressor with a fixed random state for reproducibility.
 
@@ -21,7 +25,9 @@ def create_random_forest_regressor(random_state: int = 123) -> RandomForestRegre
     return RandomForestRegressor(random_state=random_state)
 
 
-def create_lightgbm_regressor(random_state: int = 123) -> LGBMRegressor:
+def create_lightgbm_regressor(
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> LGBMRegressor:
     """
     Create a LightGBM regressor with a fixed random state for reproducibility.
 

@@ -3,6 +3,8 @@
 Currently validates loading of split parquet via src.utils.load_splits_from_parquet.
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -45,7 +47,7 @@ def test_load_splits_from_parquet_roundtrip(tmp_path: Path) -> None:
     except Exception as exc:
         pytest.skip(f"Parquet engine not available: {exc}")
 
-    train_df, val_df, test_df = load_splits_from_parquet(str(pq_path))
+    train_df, val_df, test_df = load_splits_from_parquet(pq_path)
 
     # 'split' column is removed in outputs
     for split_df in (train_df, val_df, test_df):
@@ -60,7 +62,7 @@ def test_load_splits_from_parquet_roundtrip(tmp_path: Path) -> None:
 def test_load_splits_from_parquet_missing_file(tmp_path: Path) -> None:
     """Missing file raises FileNotFoundError."""
     with pytest.raises(FileNotFoundError):
-        load_splits_from_parquet(str(tmp_path / "nope.parquet"))
+        load_splits_from_parquet(tmp_path / "nope.parquet")
 
 
 def test_load_splits_from_parquet_missing_split_column(tmp_path: Path) -> None:
@@ -73,7 +75,7 @@ def test_load_splits_from_parquet_missing_split_column(tmp_path: Path) -> None:
         pytest.skip(f"Parquet engine not available: {exc}")
 
     with pytest.raises(KeyError):
-        load_splits_from_parquet(str(pq_path))
+        load_splits_from_parquet(pq_path)
 
 
 

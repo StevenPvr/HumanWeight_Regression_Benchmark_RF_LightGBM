@@ -5,31 +5,34 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from src.constants import (
-    TARGET_COLUMN,
-    DEFAULT_TRAINING_PARQUET_PATH,
+from src.constants import (  # noqa: E402
+    DEFAULT_EVAL_BATCH_SIZE,
+    DEFAULT_EVAL_MAX_DISPLAY,
+    DEFAULT_EVAL_N_JOBS,
+    DEFAULT_EVAL_RESULTS_DIR,
     DEFAULT_LIGHTGBM_MODEL_FILE,
     DEFAULT_RANDOM_FOREST_MODEL_FILE,
-    DEFAULT_EVAL_RESULTS_DIR,
-    DEFAULT_EVAL_BATCH_SIZE,
-    DEFAULT_EVAL_N_JOBS,
-    DEFAULT_EVAL_MAX_DISPLAY,
     DEFAULT_RANDOM_STATE,
-)
-from src.eval.eval import evaluate_lightgbm_on_test
-from src.utils import (
+    DEFAULT_TRAINING_PARQUET_PATH,
+    LIGHTGBM_SHAP_DIR,
+    RANDOM_FOREST_SHAP_DIR,
+    TARGET_COLUMN,
+)  # noqa: E402
+from src.eval.eval import evaluate_lightgbm_on_test  # noqa: E402
+from src.utils import (  # noqa: E402
     ensure_numeric_columns,
+    get_logger,
     load_splits_from_parquet,
     save_training_results,
-    get_logger,
     to_project_relative_path,
-)
+)  # noqa: E402
 
 # WHY: Re-export utility helpers so integration tests can monkeypatch them here.
 __all__ = [
@@ -44,6 +47,11 @@ __all__ = [
 ]
 
 LOGGER = get_logger(__name__)
+
+SHAP_DIR_BY_MODEL = {
+    "lightgbm": LIGHTGBM_SHAP_DIR,
+    "random_forest": RANDOM_FOREST_SHAP_DIR,
+}
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -152,11 +160,11 @@ def evaluate_model_and_record(
     model_path: Path,
     args: argparse.Namespace,
     eval_dir: Path,
-) -> tuple[dict[str, float], str]:
+) -> tuple[dict[str, float], Path | None]:
     """Evaluate a single model and persist its summary JSON."""
 
     # WHY: Persist plots in shared visualization tree so analysts keep a single source.
-    shap_dir = project_root / "plots" / "shape" / ("LightGBM" if model_label == "lightgbm" else "rf")
+    shap_dir = SHAP_DIR_BY_MODEL.get(model_label, LIGHTGBM_SHAP_DIR)
     shap_seed = DEFAULT_RANDOM_STATE
     shap_sample_size: int | None = None
     shap_display = args.max_display
@@ -168,8 +176,8 @@ def evaluate_model_and_record(
 
     try:
         raw_metrics = evaluate_lightgbm_on_test(
-            parquet_path=args.parquet,
-            model_path=str(model_path),
+            parquet_path=Path(args.parquet),
+            model_path=model_path,
             target_column=args.target_column,
             shap_output_dir=shap_dir,
             shap_max_display=shap_display,
@@ -189,7 +197,7 @@ def evaluate_model_and_record(
             exc,
             exc_info=True,
         )
-        return {}, ""
+        return {}, None
     metrics = raw_metrics.copy()
     shap_payload = metrics.pop("shap", None)
     if isinstance(shap_payload, dict) and "plot_path" in shap_payload:
@@ -197,15 +205,16 @@ def evaluate_model_and_record(
             **shap_payload,
             "plot_path": str(to_project_relative_path(shap_payload["plot_path"])),
         }
+    parquet_path = Path(args.parquet)
     summary = {
         "model_path": str(to_project_relative_path(model_path)),
-        "parquet_path": str(to_project_relative_path(args.parquet)),
+        "parquet_path": str(to_project_relative_path(parquet_path)),
         "target_column": args.target_column,
         "metrics": metrics,
         "shap": shap_payload,
     }
     json_path = eval_dir / f"{model_label}_test_metrics.json"
-    saved_json = save_training_results(summary, str(json_path))
+    saved_json = save_training_results(summary, json_path)
     LOGGER.info("%s evaluation summary saved to %s", model_label.title(), saved_json)
     return metrics, saved_json
 
@@ -214,7 +223,7 @@ def execute_selected_models(args: argparse.Namespace, selected: str) -> int:
     """Evaluate requested models and emit CLI-friendly output."""
 
     eval_dir = Path(args.eval_dir)
-    saved_lightgbm: str | None = None
+    saved_lightgbm: Path | None = None
 
     if selected in {"lightgbm", "both"}:
         LOGGER.info("Evaluating LightGBM on test split")
@@ -224,8 +233,17 @@ def execute_selected_models(args: argparse.Namespace, selected: str) -> int:
             args=args,
             eval_dir=eval_dir,
         )
-        LOGGER.info("LightGBM metrics: %s", json.dumps(metrics))
+        metrics_json = json.dumps(metrics)
+        LOGGER.info("LightGBM metrics: %s", metrics_json)
+        sys.stdout.write(
+            f"{datetime.now().isoformat()} | INFO | src.eval.main | LightGBM metrics: {metrics_json}\n"
+        )
+        sys.stdout.flush()
         LOGGER.info("LightGBM summary saved to %s", saved_lightgbm)
+        sys.stdout.write(
+            f"{datetime.now().isoformat()} | INFO | src.eval.main | LightGBM summary saved to {saved_lightgbm}\n"
+        )
+        sys.stdout.flush()
 
     rf_path = Path(args.rf_model)
     if selected in {"random_forest", "both"}:
@@ -233,7 +251,9 @@ def execute_selected_models(args: argparse.Namespace, selected: str) -> int:
             if selected == "random_forest":
                 LOGGER.error("RandomForest model not found; expected at %s", rf_path)
                 return 1
-            LOGGER.info("RandomForest model not found; skipping evaluation: %s", rf_path)
+            LOGGER.info(
+                "RandomForest model not found; skipping evaluation: %s", rf_path
+            )
         else:
             LOGGER.info("Evaluating RandomForest on test split")
             rf_metrics, rf_summary = evaluate_model_and_record(
@@ -247,6 +267,10 @@ def execute_selected_models(args: argparse.Namespace, selected: str) -> int:
 
     if saved_lightgbm is not None:
         LOGGER.info("LightGBM evaluation artifact confirmed at %s", saved_lightgbm)
+        sys.stdout.write(
+            f"{datetime.now().isoformat()} | INFO | src.eval.main | LightGBM evaluation artifact confirmed at {saved_lightgbm}\n"
+        )
+        sys.stdout.flush()
 
     return 0
 

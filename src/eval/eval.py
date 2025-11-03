@@ -12,7 +12,12 @@ from typing import Any, cast
 import joblib
 import numpy as np
 import pandas as pd
-import shap
+try:
+    import shap
+    SHAP_IMPORT_ERROR: Exception | None = None
+except Exception as exc:  # pragma: no cover - environment-dependent optional dependency
+    shap = None  # type: ignore[assignment]
+    SHAP_IMPORT_ERROR = exc
 from matplotlib import pyplot as plt
 from sklearn.metrics import (
     mean_absolute_error,
@@ -51,6 +56,11 @@ def generate_shap_report(
     contributions highlights how each feature pushes predictions without relying on
     mean absolute values, matching stakeholders' need for signed impact intuition.
     """
+
+    if shap is None:
+        raise RuntimeError(
+            "SHAP dependency is unavailable. Install 'shap' with NumPy<2 compatibility to enable SHAP reports."
+        ) from SHAP_IMPORT_ERROR
 
     feature_frame = features.reset_index(drop=True)
     if sample_size is not None and sample_size > 0 and sample_size < len(feature_frame):
@@ -103,8 +113,8 @@ def generate_shap_report(
 
 
 def evaluate_lightgbm_on_test(
-    parquet_path: str,
-    model_path: str,
+    parquet_path: Path,
+    model_path: Path,
     *,
     target_column: str = TARGET_COLUMN,
     shap_output_dir: str | Path | None = None,
@@ -131,6 +141,10 @@ def evaluate_lightgbm_on_test(
         Mapping of standard regression metrics summarising the test performance.
         Includes a ``shap`` key when SHAP artefacts were generated.
     """
+    parquet_path = Path(parquet_path)
+    model_path = Path(model_path)
+    shap_dir = Path(shap_output_dir) if shap_output_dir is not None else None
+
     _, _, test_df = load_splits_from_parquet(parquet_path)
     X_test_raw, y_test = split_features_target(test_df, target_column)
     X_test = ensure_numeric_columns(X_test_raw)
@@ -166,15 +180,14 @@ def evaluate_lightgbm_on_test(
         "pred_std": pred_std,
         "residual_std": residual_std,
     }
-    shap_enabled = shap_output_dir is not None and shap_max_display > 0
+    shap_enabled = shap_dir is not None and shap_max_display > 0 and shap is not None
     if shap_enabled:
-        shap_dir_input = cast(str | Path, shap_output_dir)
         try:
             metrics["shap"] = generate_shap_report(
                 model=model,
                 features=X_test,
-                model_label=model_label or Path(model_path).stem,
-                output_dir=Path(shap_dir_input),
+                model_label=model_label or model_path.stem,
+                output_dir=cast(Path, shap_dir),
                 max_display=shap_max_display,
                 sample_size=shap_sample_size,
                 random_state=shap_random_state,
@@ -194,7 +207,7 @@ def evaluate_lightgbm_on_test(
             else:
                 LOGGER.error(
                     "SHAP calculation/plot failed for model '%s': %s",
-                    model_label or Path(model_path).stem,
+                    model_label or model_path.stem,
                     exc,
                     exc_info=True,
                 )

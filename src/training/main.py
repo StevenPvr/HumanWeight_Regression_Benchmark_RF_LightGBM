@@ -184,11 +184,11 @@ def determine_model_selection(args: argparse.Namespace) -> str:
     return "both" if bool(args.also_random_forest) else "lightgbm"
 
 
-def load_dataset_splits_safe(parquet_path: str) -> tuple[pd.DataFrame | None, pd.DataFrame | None, pd.DataFrame | None]:
+def load_dataset_splits_safe(parquet_path: Path) -> tuple[pd.DataFrame | None, pd.DataFrame | None, pd.DataFrame | None]:
     """Load dataset splits while logging any failure without aborting the CLI."""
 
     try:
-        train_df, val_df, test_df = load_splits_from_parquet(parquet_path)
+        train_df, val_df, test_df = load_splits_from_parquet(Path(parquet_path))
     except Exception as exc:  # pragma: no cover - defensive logging
         LOGGER.warning("Failed to load dataset splits: %s", exc)
         return None, None, None
@@ -216,10 +216,13 @@ def save_lightgbm_summary(
     base_name = "lightgbm" if use_default_out else model_path.stem
     metrics_path = model_path.parent / f"{base_name}_metrics.json"
 
+    parquet_path = Path(args.parquet)
+    params_path = Path(args.params)
+
     summary_payload: dict[str, object] = {
         "model_path": str(to_project_relative_path(artifact_path)),
-        "parquet_path": str(to_project_relative_path(args.parquet)),
-        "params_path": str(to_project_relative_path(args.params)),
+        "parquet_path": str(to_project_relative_path(parquet_path)),
+        "params_path": str(to_project_relative_path(params_path)),
         "target_column": args.target_column,
         "random_state": args.random_state,
         "validation": {"mse": validation_mse},
@@ -231,11 +234,8 @@ def save_lightgbm_summary(
     if best_params is not None:
         summary_payload["best_params"] = best_params
 
-    save_training_results(summary_payload, str(metrics_path))
-    LOGGER.info(
-        "Training summary saved to %s",
-        to_project_relative_path(metrics_path),
-    )
+    saved_summary = save_training_results(summary_payload, metrics_path)
+    LOGGER.info("Training summary saved to %s", saved_summary)
 
 
 def save_random_forest_summary(
@@ -250,10 +250,13 @@ def save_random_forest_summary(
 
     rf_base = Path(artifact_path).stem
     rf_metrics_path = Path(artifact_path).parent / f"{rf_base}_metrics.json"
+    rf_parquet_path = Path(args.parquet)
+    rf_params_path = Path(args.rf_params)
+
     rf_summary: dict[str, object] = {
         "model_path": str(to_project_relative_path(artifact_path)),
-        "parquet_path": str(to_project_relative_path(args.parquet)),
-        "params_path": str(to_project_relative_path(args.rf_params)),
+        "parquet_path": str(to_project_relative_path(rf_parquet_path)),
+        "params_path": str(to_project_relative_path(rf_params_path)),
         "target_column": args.target_column,
         "random_state": args.random_state,
         "validation": {"mse": validation_mse},
@@ -261,11 +264,8 @@ def save_random_forest_summary(
         "validation_rows": len(val_df),
         "best_params": best_params,
     }
-    save_training_results(rf_summary, str(rf_metrics_path))
-    LOGGER.info(
-        "RandomForest training summary saved to %s",
-        to_project_relative_path(rf_metrics_path),
-    )
+    saved_rf_summary = save_training_results(rf_summary, rf_metrics_path)
+    LOGGER.info("RandomForest training summary saved to %s", saved_rf_summary)
 
 
 def run_lightgbm_stage(
@@ -280,8 +280,8 @@ def run_lightgbm_stage(
         return ModelStageResult()
 
     model = train_lightgbm_with_best_params(
-        parquet_path=args.parquet,
-        params_json_path=args.params,
+        parquet_path=Path(args.parquet),
+        params_json_path=Path(args.params),
         target_column=args.target_column,
         random_state=args.random_state,
     )
@@ -306,7 +306,7 @@ def run_lightgbm_stage(
 
     best_params = None
     with suppress(Exception):
-        best_params = read_best_params(args.params)
+        best_params = read_best_params(Path(args.params))
 
     save_lightgbm_summary(args, artifact_path, train_df, val_df, validation_mse, best_params)
 
@@ -327,7 +327,7 @@ def run_random_forest_stage(
         LOGGER.warning("Skipping RandomForest stage because dataset splits are unavailable")
         return ModelStageResult()
 
-    rf_best = read_best_params(args.rf_params)
+    rf_best = read_best_params(Path(args.rf_params))
     rf = create_random_forest_regressor(random_state=int(args.random_state))
     allowed = set(rf.get_params().keys())
     rf_safe = {k: v for k, v in rf_best.items() if k in allowed}
@@ -376,7 +376,7 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info("Target column: %s | Random state: %d", args.target_column, args.random_state)
 
     selected = determine_model_selection(args)
-    train_df, val_df, _ = load_dataset_splits_safe(args.parquet)
+    train_df, val_df, _ = load_dataset_splits_safe(Path(args.parquet))
 
     lightgbm_result = run_lightgbm_stage(args, selected, train_df, val_df)
     rf_result = run_random_forest_stage(args, selected, train_df, val_df)

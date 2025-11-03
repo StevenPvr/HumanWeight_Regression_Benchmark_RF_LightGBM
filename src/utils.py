@@ -1,26 +1,17 @@
-"""Project utilities.
-
-This module centralizes reusable helper functions.
-"""
+"""Project utilities centralizing reusable helpers."""
 
 from __future__ import annotations
 
-import logging
-import os
 import json
+import logging
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Dict, Sequence, Any, cast
+from typing import Any, cast
 
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import KFold, StratifiedKFold
-
-# WHY: local numpy import keeps numeric helpers close to consumers without polluting global namespace unnecessarily
-import numpy as np
-from tqdm.auto import tqdm
-from joblib import Parallel, delayed, parallel
-from contextlib import contextmanager
 
 from src.constants import PROJECT_ROOT
 
@@ -60,8 +51,8 @@ def save_splits_with_marker(
     train_df: pd.DataFrame,
     val_df: pd.DataFrame,
     test_df: pd.DataFrame,
-    csv_path: str,
-    parquet_path: str,
+    csv_path: Path,
+    parquet_path: Path,
 ) -> None:
     """
     Save train/val/test splits into single CSV and Parquet files with a split marker.
@@ -92,10 +83,11 @@ def save_splits_with_marker(
     combined = pd.concat([train_tagged, val_tagged, test_tagged], ignore_index=True)
 
     # Ensure destination directories exist
+    csv_path = Path(csv_path)
+    parquet_path = Path(parquet_path)
+
     for path in (csv_path, parquet_path):
-        directory = os.path.dirname(path)
-        if directory:
-            os.makedirs(directory, exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
 
     # Write CSV
     combined.to_csv(csv_path, index=False)
@@ -110,9 +102,9 @@ def save_splits_with_marker(
 
 
 def save_label_encoders_mappings(
-    encoders: Dict[str, LabelEncoder],
-    json_path: str,
-    csv_path: str,
+    encoders: dict[str, LabelEncoder],
+    json_path: Path,
+    csv_path: Path,
 ) -> None:
     """
     Persist LabelEncoder mappings for categorical columns to JSON and CSV.
@@ -120,8 +112,8 @@ def save_label_encoders_mappings(
     JSON captures both the class ordering and explicit mapping. CSV provides a
     flat-table view with rows (column, original_value, encoded_value).
     """
-    records = []
-    export: Dict[str, dict] = {}
+    records: list[dict[str, str | int]] = []
+    export: dict[str, dict[str, Any]] = {}
 
     for column_name, encoder in encoders.items():
         classes_raw = cast(Sequence[Any], getattr(encoder, "classes_", ()))
@@ -132,32 +124,35 @@ def save_label_encoders_mappings(
             "mapping": mapping,
         }
         for cls, idx in mapping.items():
-            records.append({
-                "column": column_name,
-                "original_value": cls,
-                "encoded_value": idx,
-            })
+            records.append(
+                {
+                    "column": column_name,
+                    "original_value": cls,
+                    "encoded_value": idx,
+                }
+            )
 
     # Ensure directories exist
+    json_path = Path(json_path)
+    csv_path = Path(csv_path)
+
     for path in (json_path, csv_path):
-        directory = os.path.dirname(path)
-        if directory:
-            os.makedirs(directory, exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
 
     # Write JSON
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(export, f, ensure_ascii=False, indent=2)
+    with json_path.open("w", encoding="utf-8") as handle:
+        json.dump(export, handle, ensure_ascii=False, indent=2)
 
     # Write CSV (empty allowed)
-    df_map = pd.DataFrame.from_records(records, columns=[
-        "column", "original_value", "encoded_value"
-    ])
+    df_map = pd.DataFrame.from_records(
+        records,
+        columns=["column", "original_value", "encoded_value"],
+    )
     df_map.to_csv(csv_path, index=False)
 
 
-
 def load_splits_from_parquet(
-    parquet_path: str,
+    parquet_path: Path,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Load train/val/test splits from a single Parquet file with a 'split' column.
@@ -176,7 +171,9 @@ def load_splits_from_parquet(
         KeyError: If the 'split' column is missing in the file.
         RuntimeError: If Parquet read fails due to missing engine.
     """
-    if not os.path.exists(parquet_path):
+    parquet_path = Path(parquet_path)
+
+    if not parquet_path.exists():
         raise FileNotFoundError(f"Parquet file not found: {parquet_path}")
 
     try:
@@ -191,7 +188,9 @@ def load_splits_from_parquet(
 
     def _subset(tag: str) -> pd.DataFrame:
         mask: pd.Series = df["split"] == tag
-        subset = df.loc[mask].drop(columns=["split"], errors="ignore").reset_index(drop=True)
+        subset = (
+            df.loc[mask].drop(columns=["split"], errors="ignore").reset_index(drop=True)
+        )
         return cast(pd.DataFrame, subset)
 
     train_df = _subset("train")
@@ -273,7 +272,9 @@ def round_columns(
         if col not in out.columns:
             continue  # tolerate absent engineered columns
         # WHY: Coerce to numeric first to ensure stable rounding semantics
-        series_numeric_s: pd.Series = cast(pd.Series, pd.to_numeric(out[col], errors="coerce"))
+        series_numeric_s: pd.Series = cast(
+            pd.Series, pd.to_numeric(out[col], errors="coerce")
+        )
         dec = int(decimals)
         # WHY: Use Python's round to avoid pandas/numpy overload ambiguity (freq vs decimals)
         values = series_numeric_s.tolist()
@@ -282,6 +283,7 @@ def round_columns(
         ]
         out[col] = pd.Series(rounded_list, index=out.index, dtype="object")
     return out
+
 
 def fit_label_encoders_on_train(
     train_df: pd.DataFrame,
@@ -352,7 +354,7 @@ def fit_label_encoders_on_train(
 
 
 def prepare_train_val_numeric_splits(
-    parquet_path: str,
+    parquet_path: Path,
     target_column: str,
 ) -> tuple[tuple[pd.DataFrame, pd.Series], tuple[pd.DataFrame, pd.Series]]:
     """Return encoded numeric train/validation splits from a Parquet artifact.
@@ -372,6 +374,7 @@ def prepare_train_val_numeric_splits(
         ValueError: If the target column leaks back into the feature matrices.
     """
 
+    parquet_path = Path(parquet_path)
     train_df, val_df, _ = load_splits_from_parquet(parquet_path)
 
     X_train_raw, y_train = split_features_target(train_df, target_column)
@@ -386,7 +389,10 @@ def prepare_train_val_numeric_splits(
     X_train_numeric = ensure_numeric_columns(X_train_encoded)
     X_val_numeric = ensure_numeric_columns(X_val_encoded)
 
-    if target_column in X_train_numeric.columns or target_column in X_val_numeric.columns:
+    if (
+        target_column in X_train_numeric.columns
+        or target_column in X_val_numeric.columns
+    ):
         # WHY: immediate guard keeps assertions closer to the leakage source for faster debugging
         raise ValueError("Target column leaked into feature matrix after encoding.")
 
@@ -422,7 +428,7 @@ def split_features_target(
     return X, y_series.copy()
 
 
-def read_best_params(params_json_path: str) -> dict[str, Any]:
+def read_best_params(params_json_path: Path) -> dict[str, Any]:
     """Return hyperparameters stored under the 'best_params' key of a JSON file.
 
     WHY: Centralize validation of tuning outputs so training code stays focused
@@ -440,9 +446,9 @@ def read_best_params(params_json_path: str) -> dict[str, Any]:
         KeyError: If the expected 'best_params' object is absent or invalid.
         json.JSONDecodeError: If the file content is not valid JSON.
     """
-    import json
+    params_json_path = Path(params_json_path)
 
-    with open(params_json_path, "r", encoding="utf-8") as file:
+    with params_json_path.open("r", encoding="utf-8") as file:
         payload: dict[str, Any] = json.load(file)
 
     best_params = payload.get("best_params")
@@ -468,7 +474,7 @@ def to_project_relative_path(path: str | Path) -> Path:
         return resolved_path
 
 
-def save_training_results(results: dict[str, Any], json_path: str) -> str:
+def save_training_results(results: dict[str, Any], json_path: Path) -> Path:
     """Persist training metrics and metadata to JSON.
 
     WHY: Storing a structured summary alongside the model artifact keeps
@@ -489,13 +495,12 @@ def save_training_results(results: dict[str, Any], json_path: str) -> str:
         raise ValueError("results payload cannot be empty")
 
     path_obj = Path(json_path).expanduser()
-    if path_obj.parent:
-        path_obj.parent.mkdir(parents=True, exist_ok=True)
+    path_obj.parent.mkdir(parents=True, exist_ok=True)
 
     with path_obj.open("w", encoding="utf-8") as handle:
         json.dump(results, handle, ensure_ascii=False, indent=2)
 
-    return str(to_project_relative_path(path_obj))
+    return to_project_relative_path(path_obj)
 
 
 def assert_no_overlap_between_train_and_test(
@@ -610,6 +615,6 @@ def proportional_allocation_indices(
         n_second = max(0, min(n_second, m - n_first))
 
         first.extend(idx[:n_first].tolist())
-        second.extend(idx[n_first:n_first + n_second].tolist())
+        second.extend(idx[n_first : n_first + n_second].tolist())
 
     return first, second
