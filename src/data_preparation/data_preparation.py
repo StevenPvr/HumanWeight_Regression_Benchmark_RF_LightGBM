@@ -1,26 +1,26 @@
-"""Data preparation module for encoding categorical variables.
+"""Data preparation helpers with deterministic, leak-safe behavior."""
 
-WHY: Keep simple, deterministic transforms and avoid leakage-prone patterns.
-Refactors prefer copy-on-write and explicit seeding for reproducibility.
-"""
+from __future__ import annotations
 
+from typing import cast
+
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from typing import Dict, Tuple, cast
-import numpy as np
+
 from src.constants import (
     DEFAULT_N_STRATA,
     DEFAULT_RANDOM_STATE,
+    DEFAULT_TEST_FRAC,
     DEFAULT_TRAIN_FRAC,
     DEFAULT_VAL_FRAC,
-    DEFAULT_TEST_FRAC,
 )
 from src.utils import proportional_allocation_indices
 
 
 def encode_categorical_variables(
-    df: pd.DataFrame
-) -> Tuple[pd.DataFrame, Dict[str, LabelEncoder]]:
+    df: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, LabelEncoder]]:
     """
     Detect and encode categorical variables using LabelEncoder.
 
@@ -40,10 +40,10 @@ def encode_categorical_variables(
         >>> df_encoded, encoders = encode_categorical_variables(df)
     """
     df_encoded = df.copy()
-    encoders = {}
+    encoders: dict[str, LabelEncoder] = {}
 
     # Detect categorical columns (object dtype)
-    categorical_columns = df_encoded.select_dtypes(include=['object']).columns
+    categorical_columns = df_encoded.select_dtypes(include=["object"]).columns
 
     # Apply LabelEncoder to each categorical column
     for col in categorical_columns:
@@ -54,7 +54,10 @@ def encode_categorical_variables(
     return df_encoded, encoders
 
 
-def shuffle_data(df: pd.DataFrame, random_state: int = 123) -> pd.DataFrame:
+def shuffle_data(
+    df: pd.DataFrame,
+    random_state: int = DEFAULT_RANDOM_STATE,
+) -> pd.DataFrame:
     """
     Shuffle DataFrame rows in random order with reproducibility.
 
@@ -63,7 +66,7 @@ def shuffle_data(df: pd.DataFrame, random_state: int = 123) -> pd.DataFrame:
 
     Args:
         df: Input DataFrame to shuffle
-        random_state: Random seed for reproducibility (default: 123)
+        random_state: Random seed for reproducibility.
 
     Returns:
         Shuffled DataFrame with reset index
@@ -85,7 +88,7 @@ def split_train_val_test(
     test_frac: float = DEFAULT_TEST_FRAC,
     random_state: int = DEFAULT_RANDOM_STATE,
     n_strata: int = DEFAULT_N_STRATA,
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Reproducible split with no target-driven decisions using the test set.
 
     WHY: To avoid any test leakage, the test split is drawn first via a
@@ -152,7 +155,7 @@ def _holdout_test(
     *,
     test_frac: float,
     rng: np.random.RandomState,
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Return remaining_df and test_df using a target-agnostic permutation.
 
     WHY: Drawing the test set first without using the target avoids any
@@ -201,7 +204,7 @@ def _allocate_train_val(
     train_frac: float,
     val_frac: float,
     rng: np.random.RandomState,
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Allocate train/val within strata using deterministic proportional rounding.
 
     WHY: Splitting per-stratum with the same seeded RNG provides reproducible

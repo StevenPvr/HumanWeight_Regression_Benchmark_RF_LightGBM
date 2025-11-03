@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
 from typing import Tuple, List
 
 import numpy as np
@@ -66,7 +67,7 @@ def test_optimize_lightgbm_hyperparameters_with_mocked_splits(monkeypatch: pytes
     val_df = _make_mock_split(rng, 20)
     test_df = _make_mock_split(rng, 10)
 
-    def fake_loader(_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    def fake_loader(_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Return the mocked dataset splits regardless of input path.
 
         WHY: Decouple the test from filesystem dependencies to keep it hermetic.
@@ -77,7 +78,7 @@ def test_optimize_lightgbm_hyperparameters_with_mocked_splits(monkeypatch: pytes
     monkeypatch.setattr("src.utils.load_splits_from_parquet", fake_loader)
 
     best_params, best_value, val_summary = optimize_lightgbm_hyperparameters(
-        parquet_path="/does/not/matter.parquet",
+        parquet_path=Path("/does/not/matter.parquet"),
         target_column="target",
         n_trials=5,
         random_state=123,
@@ -178,7 +179,7 @@ def test_optimize_lightgbm_handles_categorical_unseen_values(
     val_df = _attach_target(val_df)
     test_df = _attach_target(test_df)
 
-    def fake_loader(_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    def fake_loader(_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         return train_df, val_df, test_df
 
     monkeypatch.setattr("src.utils.load_splits_from_parquet", fake_loader)
@@ -213,7 +214,7 @@ def test_optimize_lightgbm_handles_categorical_unseen_values(
     )
 
     optimize_lightgbm_hyperparameters(
-        parquet_path="/tmp/raw_splits.parquet",
+        parquet_path=Path("/tmp/raw_splits.parquet"),
         target_column="target",
         n_trials=2,
         random_state=123,
@@ -230,13 +231,13 @@ def test_optimize_random_forest_hyperparameters_with_mocked_splits(monkeypatch: 
     val_df = _make_mock_split(rng, 18, coeff_f1=1.5, coeff_f2=-0.25, noise_scale=0.05)
     test_df = _make_mock_split(rng, 10, coeff_f1=1.5, coeff_f2=-0.25, noise_scale=0.05)
 
-    def fake_loader(_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    def fake_loader(_path: Path) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         return train_df, val_df, test_df
 
     monkeypatch.setattr("src.utils.load_splits_from_parquet", fake_loader)
 
     best_params, best_value, val_summary = optimize_random_forest_hyperparameters(
-        parquet_path="/unused.parquet",
+        parquet_path=Path("/unused.parquet"),
         target_column="target",
         n_trials=3,
         random_state=123,
@@ -293,7 +294,7 @@ def test_optimize_random_forest_handles_categorical(monkeypatch: pytest.MonkeyPa
     monkeypatch.setattr("src.utils.load_splits_from_parquet", lambda _p: (train_df, val_df, test_df))
 
     best_params, best_value, val_summary = optimize_random_forest_hyperparameters(
-        parquet_path="/unused.parquet",
+        parquet_path=Path("/unused.parquet"),
         target_column="target",
         n_trials=1,
         random_state=123,

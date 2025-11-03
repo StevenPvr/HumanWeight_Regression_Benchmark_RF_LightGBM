@@ -14,11 +14,13 @@ DATA_DIR: Path = PROJECT_ROOT / "data"
 RESULTS_DIR: Path = PROJECT_ROOT / "results"
 PLOTS_DIR: Path = PROJECT_ROOT / "plots"
 PERMUTATION_PLOTS_DIR: Path = PLOTS_DIR / "permutation"
+SHAP_PLOTS_DIR: Path = PLOTS_DIR / "shape"
 
 # Relative paths (string-friendly) rooted at the repository
 RELATIVE_DATA_DIR: Path = Path("data")
 RELATIVE_RESULTS_DIR: Path = Path("results")
 RELATIVE_PLOTS_DIR: Path = Path("plots")
+RELATIVE_SHAP_PLOTS_DIR: Path = RELATIVE_PLOTS_DIR / "shape"
 
 # Default dataset/file names
 DEFAULT_INPUT_CLEANED_FILE: str = "dataset_cleaned_final.csv"
@@ -28,7 +30,9 @@ DEFAULT_ENCODERS_JSON_FILE: str = "encoders_mappings.json"
 DEFAULT_ENCODERS_CSV_FILE: str = "encoders_mappings.csv"
 DEFAULT_HYPEROPT_INPUT_PARQUET: Path = DATA_DIR / DEFAULT_SPLITS_PARQUET_FILE
 DEFAULT_FEATURE_IMPORTANCE_JSON_PATH: Path = RESULTS_DIR / "feature_importances.json"
-DEFAULT_FEATURE_IMPORTANCE_PLOT_PATH: Path = PERMUTATION_PLOTS_DIR / "feature_importances.png"
+DEFAULT_FEATURE_IMPORTANCE_PLOT_PATH: Path = (
+    PERMUTATION_PLOTS_DIR / "feature_importances.png"
+)
 
 # ML-related defaults
 TARGET_COLUMN: str = "weight-(kg)"
@@ -61,9 +65,18 @@ DEFAULT_RANDOM_FOREST_MODEL_PATH: Path = RESULTS_DIR / "models" / "random_forest
 # Evaluation defaults for CLI entry points
 DEFAULT_EVAL_RESULTS_DIR: Path = RESULTS_DIR / "eval"
 DEFAULT_LIGHTGBM_MODEL_FILE: Path = DEFAULT_LIGHTGBM_MODEL_PATH.with_suffix(".joblib")
-DEFAULT_RANDOM_FOREST_MODEL_FILE: Path = DEFAULT_RANDOM_FOREST_MODEL_PATH.with_suffix(".joblib")
+DEFAULT_RANDOM_FOREST_MODEL_FILE: Path = DEFAULT_RANDOM_FOREST_MODEL_PATH.with_suffix(
+    ".joblib"
+)
 DEFAULT_EVAL_BATCH_SIZE: int = 1024
 DEFAULT_EVAL_N_JOBS: int = -1
 DEFAULT_EVAL_MAX_DISPLAY: int = 20
 DEFAULT_RANDOM_FOREST_SHAP_SAMPLE_SIZE: int = 512
 
+# Feature engineering defaults
+DEFAULT_PERMUTATION_REPEATS: int = 10
+DEFAULT_PERMUTATION_N_JOBS: int = -1
+
+# SHAP output structure
+LIGHTGBM_SHAP_DIR: Path = SHAP_PLOTS_DIR / "LightGBM"
+RANDOM_FOREST_SHAP_DIR: Path = SHAP_PLOTS_DIR / "rf"

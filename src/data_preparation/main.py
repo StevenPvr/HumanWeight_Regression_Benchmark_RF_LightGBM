@@ -99,13 +99,13 @@ def run_preparation_pipeline(
         train_df=train_df_enc,
         val_df=val_df_enc,
         test_df=test_df_enc,
-        csv_path=str(output_csv),
-        parquet_path=str(output_parquet),
+        csv_path=output_csv,
+        parquet_path=output_parquet,
     )
     LOGGER.info("Splits saved to %s and %s", output_csv, output_parquet)
 
     # Save encoders mapping for reproducibility and inference
-    save_label_encoders_mappings(encoders, str(encoders_json), str(encoders_csv))
+    save_label_encoders_mappings(encoders, encoders_json, encoders_csv)
     LOGGER.info("Encoders mappings saved to %s and %s", encoders_json, encoders_csv)
 
 

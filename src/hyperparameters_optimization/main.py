@@ -107,6 +107,8 @@ def main() -> None:
     argv_list = list(sys.argv[1:])
     args = parser.parse_args(argv_list)
 
+    input_path = Path(args.input)
+
     # Normalize model selection to a canonical value to avoid surprises.
     # WHY: Users often type 'randomforest' or 'rf'; we accept common aliases
     # and map them to 'random_forest' to ensure only the intended branch runs.
@@ -122,7 +124,7 @@ def main() -> None:
 
     # Infer target name if not provided
     if args.target is None:
-        train_df, _val_df, _test_df = load_splits_from_parquet(args.input)
+        train_df, _val_df, _test_df = load_splits_from_parquet(input_path)
         target_col = _infer_target_column(list(train_df.columns))
     else:
         target_col = args.target
@@ -146,7 +148,7 @@ def main() -> None:
             args.models = "both"
 
     # WHY: Load once to compute data summary for all outputs
-    tv_train, tv_val, _ = load_splits_from_parquet(args.input)
+    tv_train, tv_val, _ = load_splits_from_parquet(input_path)
     data_summary = {
         "train_rows": int(len(tv_train)),
         "val_rows": int(len(tv_val)),
@@ -156,51 +158,51 @@ def main() -> None:
     # Run selected model(s)
     if args.models in ("lightgbm", "both"):
         best_params, best_value, val_summary = optimize_lightgbm_hyperparameters(
-            parquet_path=args.input,
+            parquet_path=input_path,
             target_column=target_col,
             n_trials=args.n_trials,
             random_state=args.random_state,
         )
 
         output_path = RESULTS_DIR / HYPEROPT_LGBM_RESULTS_FILENAME
-        _ = save_training_results(
+        saved_lgbm = save_training_results(
             {
                 "best_params": best_params,
                 "best_value": float(best_value),
                 "val_metrics": {"mse": float(best_value)},
                 "data_summary": data_summary,
             },
-            str(output_path),
+            output_path,
         )
         LOGGER.info("[Hyperopt][LGBM] Validation MSE: %s", best_value)
         LOGGER.info("[Hyperopt][LGBM] Best hyperparameters:")
         for k, v in best_params.items():
             LOGGER.info("  - %s: %s", k, v)
-        LOGGER.info("[Hyperopt][LGBM] Results saved to: %s", output_path)
+        LOGGER.info("[Hyperopt][LGBM] Results saved to: %s", saved_lgbm)
 
     if args.models in ("random_forest", "both"):
         LOGGER.info("[Hyperopt] Optimizing RandomForest...")
         rf_best_params, rf_best_val, _ = optimize_random_forest_hyperparameters(
-            parquet_path=args.input,
+            parquet_path=input_path,
             target_column=target_col,
             n_trials=args.n_trials,
             random_state=args.random_state,
         )
         rf_out = RESULTS_DIR / HYPEROPT_RF_RESULTS_FILENAME
-        _ = save_training_results(
+        saved_rf = save_training_results(
             {
                 "best_params": rf_best_params,
                 "best_value": float(rf_best_val),
                 "val_metrics": {"mse": float(rf_best_val)},
                 "data_summary": data_summary,
             },
-            str(rf_out),
+            rf_out,
         )
         LOGGER.info("[Hyperopt][RF] Validation MSE: %s", rf_best_val)
         LOGGER.info("[Hyperopt][RF] Best hyperparameters:")
         for k, v in rf_best_params.items():
             LOGGER.info("  - %s: %s", k, v)
-        LOGGER.info("[Hyperopt][RF] Results saved to: %s", rf_out)
+        LOGGER.info("[Hyperopt][RF] Results saved to: %s", saved_rf)
 
 
 if __name__ == "__main__":

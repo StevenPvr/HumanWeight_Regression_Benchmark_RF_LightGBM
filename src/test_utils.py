@@ -63,7 +63,7 @@ def test_read_best_params_returns_best_dict(tmp_path: Path) -> None:
     json_path = tmp_path / "best_params.json"
     json_path.write_text(json.dumps(params), encoding="utf-8")
 
-    result = read_best_params(str(json_path))
+    result = read_best_params(json_path)
 
     assert result == params["best_params"]
 
@@ -73,17 +73,17 @@ def test_read_best_params_missing_key_raises(tmp_path: Path) -> None:
     json_path.write_text(json.dumps({"wrong": {}}), encoding="utf-8")
 
     with pytest.raises(KeyError):
-        read_best_params(str(json_path))
+        read_best_params(json_path)
 
 
 def test_save_training_results_persists_payload(tmp_path: Path) -> None:
     payload = {"metric": 1.23, "params": {"max_depth": 6}}
     target = tmp_path / "metrics" / "rf_summary.json"
 
-    saved_path = save_training_results(payload, str(target))
+    saved_path = save_training_results(payload, target)
 
-    assert Path(saved_path).exists()
-    with open(saved_path, "r", encoding="utf-8") as handle:
+    assert saved_path.exists()
+    with saved_path.open("r", encoding="utf-8") as handle:
         content = json.load(handle)
     assert content == payload
 
@@ -139,12 +139,15 @@ def test_prepare_train_val_numeric_splits_returns_numeric(monkeypatch: pytest.Mo
     val_df_with_target = attach_target(val_df)
     test_df_with_target = attach_target(test_df)
 
-    def fake_loader(_path: str) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    def fake_loader(_path: Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         return train_df_with_target, val_df_with_target, test_df_with_target
 
     monkeypatch.setattr("src.utils.load_splits_from_parquet", fake_loader)
 
-    (X_train, y_train), (X_val, y_val) = prepare_train_val_numeric_splits("unused.parquet", "target")
+    (X_train, y_train), (X_val, y_val) = prepare_train_val_numeric_splits(
+        Path("unused.parquet"),
+        "target",
+    )
 
     assert len(X_train) == len(y_train)
     assert len(X_val) == len(y_val)

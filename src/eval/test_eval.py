@@ -1,3 +1,5 @@
+"""Tests for evaluation helpers and CLI entry point."""
+
 from __future__ import annotations
 
 import json
@@ -12,31 +14,50 @@ import numpy as np
 import pandas as pd
 import pytest
 
+try:
+    import shap as _shap_check  # noqa: F401  # pragma: no cover - import guard
+except Exception as exc:  # pragma: no cover - environment dependency
+    pytest.skip(f"shap import failed: {exc}", allow_module_level=True)
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.constants import TARGET_COLUMN, DEFAULT_RANDOM_STATE, RELATIVE_PLOTS_DIR
+from src.constants import (  # noqa: E402
+    DEFAULT_RANDOM_STATE,
+    LIGHTGBM_SHAP_DIR,
+    RANDOM_FOREST_SHAP_DIR,
+    RELATIVE_SHAP_PLOTS_DIR,
+    TARGET_COLUMN,
+)  # noqa: E402
 
 try:
-    from .eval import evaluate_lightgbm_on_test
+    from .eval import evaluate_lightgbm_on_test  # noqa: E402
 except ImportError:  # pragma: no cover - fallback for direct test execution
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-    from src.eval.eval import evaluate_lightgbm_on_test
+    sys.path.insert(
+        0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    )
+    from src.eval.eval import evaluate_lightgbm_on_test  # noqa: E402
 
 
-def _make_linear_split(rng: np.random.RandomState, n: int, *, coef_f1: float = 3.0, coef_f2: float = 2.0) -> pd.DataFrame:
+def _make_linear_split(
+    rng: np.random.RandomState, n: int, *, coef_f1: float = 3.0, coef_f2: float = 2.0
+) -> pd.DataFrame:
     """Return deterministic linear synthetic data to reason about metrics."""
 
-    features = pd.DataFrame({
-        "f1": rng.normal(size=n),
-        "f2": rng.normal(size=n),
-    })
+    features = pd.DataFrame(
+        {
+            "f1": rng.normal(size=n),
+            "f2": rng.normal(size=n),
+        }
+    )
     targets = coef_f1 * features["f1"] + coef_f2 * features["f2"]
     return pd.concat([features, pd.Series(targets, name=TARGET_COLUMN)], axis=1)
 
 
-def test_evaluate_lightgbm_on_test_perfect_predictions(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_evaluate_lightgbm_on_test_perfect_predictions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """evaluation metrics are exact when the model reproduces the generator."""
 
     rng = np.random.RandomState(123)
@@ -56,8 +77,8 @@ def test_evaluate_lightgbm_on_test_perfect_predictions(monkeypatch: pytest.Monke
     monkeypatch.setattr("src.eval.eval.joblib.load", lambda _p: _PerfectModel())
 
     metrics = evaluate_lightgbm_on_test(
-        parquet_path="/does/not/matter.parquet",
-        model_path="/does/not/matter.joblib",
+        parquet_path=Path("/does/not/matter.parquet"),
+        model_path=Path("/does/not/matter.joblib"),
         target_column=TARGET_COLUMN,
     )
 
@@ -93,9 +114,9 @@ def test_cli_eval_lightgbm_only(
         "pred_std": 0.95,
         "residual_std": 0.2,
     }
-    expected_shap_dir = PROJECT_ROOT / "plots" / "shape" / "LightGBM"
+    expected_shap_dir = LIGHTGBM_SHAP_DIR
     shap_plot_relative = str(
-        RELATIVE_PLOTS_DIR / "shape" / "LightGBM" / "lightgbm_shap_beeswarm.png"
+        RELATIVE_SHAP_PLOTS_DIR / "LightGBM" / "lightgbm_shap_beeswarm.png"
     )
     shap_payload = {
         "plot_path": str(expected_shap_dir / "lightgbm_shap_beeswarm.png"),
@@ -104,14 +125,10 @@ def test_cli_eval_lightgbm_only(
     }
     expected_saved_shap = {**shap_payload, "plot_path": shap_plot_relative}
 
-    lgbm_relative_plot = str(
-        RELATIVE_PLOTS_DIR / "shape" / "LightGBM" / "lightgbm_shap_beeswarm.png"
-    )
-
     def fake_eval(
         *,
-        parquet_path: str,
-        model_path: str,
+        parquet_path: Path,
+        model_path: Path,
         target_column: str,
         shap_output_dir: Path,
         shap_max_display: int,
@@ -119,8 +136,8 @@ def test_cli_eval_lightgbm_only(
         shap_sample_size: int | None,
         shap_random_state: int,
     ) -> dict[str, Any]:
-        assert parquet_path == "data/dataset_splits_encoded.parquet"
-        assert model_path == "results/models/lightgbm.joblib"
+        assert parquet_path == Path("data/dataset_splits_encoded.parquet")
+        assert model_path == Path("results/models/lightgbm.joblib")
         assert target_column == TARGET_COLUMN
         assert shap_output_dir == expected_shap_dir
         assert shap_max_display == 20
@@ -129,43 +146,51 @@ def test_cli_eval_lightgbm_only(
         assert shap_random_state == DEFAULT_RANDOM_STATE
         return {**metrics_payload, "shap": shap_payload}
 
-    def fake_save(payload: dict[str, Any], json_path: str) -> str:
+    def fake_save(payload: dict[str, Any], json_path: Path) -> Path:
         # WHY: Persist to tmp_path to emulate real behaviour without touching repo state.
-        path = Path(json_path)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(payload), encoding="utf-8")
-        return str(path.resolve())
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        json_path.write_text(json.dumps(payload), encoding="utf-8")
+        return json_path.resolve()
 
     monkeypatch.setattr("src.eval.main.evaluate_lightgbm_on_test", fake_eval)
     monkeypatch.setattr("src.eval.main.save_training_results", fake_save)
 
     caplog.set_level(logging.INFO, logger="src.eval.main")
 
-    rc = eval_cli_main([
-        "--parquet",
-        "data/dataset_splits_encoded.parquet",
-        "--model",
-        "results/models/lightgbm.joblib",
-        "--models",
-        "lightgbm",
-        "--target-column",
-        TARGET_COLUMN,
-        "--eval-dir",
-        str(eval_dir),
-    ])
+    rc = eval_cli_main(
+        [
+            "--parquet",
+            "data/dataset_splits_encoded.parquet",
+            "--model",
+            "results/models/lightgbm.joblib",
+            "--models",
+            "lightgbm",
+            "--target-column",
+            TARGET_COLUMN,
+            "--eval-dir",
+            str(eval_dir),
+        ]
+    )
 
     assert rc == 0
     messages = caplog.messages
     # WHY: Ensure CLI still surfaces evaluation metrics and persisted artifact via logger output.
     assert messages, "Expected logging output from evaluation CLI"
-    assert any("LightGBM metrics" in message and json.dumps(metrics_payload) in message for message in messages)
+    assert any(
+        "LightGBM metrics" in message and json.dumps(metrics_payload) in message
+        for message in messages
+    )
     assert any("lightgbm_test_metrics.json" in message for message in messages)
-    saved_report = json.loads((eval_dir / "lightgbm_test_metrics.json").read_text(encoding="utf-8"))
+    saved_report = json.loads(
+        (eval_dir / "lightgbm_test_metrics.json").read_text(encoding="utf-8")
+    )
     assert saved_report["metrics"] == metrics_payload
     assert saved_report["shap"] == expected_saved_shap
 
 
-def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_cli_eval_with_random_forest(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """CLI persists summaries for both models when artifacts exist."""
 
     from src.eval.main import main as eval_cli_main
@@ -194,10 +219,11 @@ def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: 
         "pred_std": 1.0,
         "residual_std": 0.3,
     }
+
     def fake_eval(
         *,
-        parquet_path: str,
-        model_path: str,
+        parquet_path: Path,
+        model_path: Path,
         target_column: str,
         shap_output_dir: Path,
         shap_max_display: int,
@@ -205,7 +231,9 @@ def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: 
         shap_sample_size: int | None,
         shap_random_state: int,
     ) -> dict[str, Any]:
-        expected_dir = PROJECT_ROOT / "plots" / "shape" / ("LightGBM" if model_label == "lightgbm" else "rf")
+        expected_dir = (
+            LIGHTGBM_SHAP_DIR if model_label == "lightgbm" else RANDOM_FOREST_SHAP_DIR
+        )
         assert shap_output_dir == expected_dir
         if model_label == "random_forest":
             assert shap_max_display == 0
@@ -228,16 +256,15 @@ def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: 
                 }
             ],
         }
-        if model_path.endswith("random_forest.joblib"):
+        if model_path.name.endswith("random_forest.joblib"):
             return {**rf_metrics, "shap": None}
         return {**lgbm_metrics, "shap": shap_stub}
 
-    def fake_save(payload: dict[str, Any], json_path: str) -> str:
+    def fake_save(payload: dict[str, Any], json_path: Path) -> Path:
         # WHY: Mirror production behaviour so CLI can re-emit exact path strings.
-        path = Path(json_path)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(payload), encoding="utf-8")
-        return str(path)
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        json_path.write_text(json.dumps(payload), encoding="utf-8")
+        return json_path
 
     monkeypatch.setattr("src.eval.main.evaluate_lightgbm_on_test", fake_eval)
     monkeypatch.setattr("src.eval.main.save_training_results", fake_save)
@@ -248,24 +275,32 @@ def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: 
 
     eval_dir = tmp_path / "results" / "eval"
 
-    rc = eval_cli_main([
-        "--parquet",
-        "data/dataset_splits_encoded.parquet",
-        "--model",
-        "results/models/lightgbm.joblib",
-        "--rf-model",
-        str(rf_artifact),
-        "--eval-dir",
-        str(eval_dir),
-    ])
+    rc = eval_cli_main(
+        [
+            "--parquet",
+            "data/dataset_splits_encoded.parquet",
+            "--model",
+            "results/models/lightgbm.joblib",
+            "--rf-model",
+            str(rf_artifact),
+            "--eval-dir",
+            str(eval_dir),
+        ]
+    )
 
     assert rc == 0
-    lgbm_json = json.loads((eval_dir / "lightgbm_test_metrics.json").read_text(encoding="utf-8"))
-    rf_json = json.loads((eval_dir / "random_forest_test_metrics.json").read_text(encoding="utf-8"))
+    lgbm_json = json.loads(
+        (eval_dir / "lightgbm_test_metrics.json").read_text(encoding="utf-8")
+    )
+    rf_json = json.loads(
+        (eval_dir / "random_forest_test_metrics.json").read_text(encoding="utf-8")
+    )
     assert lgbm_json["metrics"] == lgbm_metrics
     assert rf_json["metrics"] == rf_metrics
     expected_lgbm_shap = {
-        "plot_path": lgbm_relative_plot,
+        "plot_path": str(
+            RELATIVE_SHAP_PLOTS_DIR / "LightGBM" / "lightgbm_shap_beeswarm.png"
+        ),
         "expected_value": 1.0,
         "feature_impacts": [
             {
@@ -282,7 +317,9 @@ def test_cli_eval_with_random_forest(monkeypatch: pytest.MonkeyPatch, tmp_path: 
     assert rf_json["shap"] is None
 
 
-def test_evaluate_lightgbm_on_test_with_shap(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_evaluate_lightgbm_on_test_with_shap(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """SHAP report contains signed impact stats and plot artefact."""
 
     rng = np.random.RandomState(7)
@@ -352,7 +389,6 @@ def test_evaluate_lightgbm_on_test_with_shap(monkeypatch: pytest.MonkeyPatch, tm
         "negative_rate",
         "max_intensity",
     }
-
 
 
 if __name__ == "__main__":

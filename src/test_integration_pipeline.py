@@ -278,10 +278,10 @@ def test_integration_pipeline_main_order(
         model_artifact["path"] = temp_path
         return temp_path
 
-    def _fake_save_summary(payload: dict, json_path: str) -> str:
+    def _fake_save_summary(payload: dict, json_path: Path) -> Path:
         called["summary"] = True
-        os.makedirs(os.path.dirname(json_path), exist_ok=True)
-        Path(json_path).write_text(json.dumps(payload), encoding="utf-8")
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        json_path.write_text(json.dumps(payload), encoding="utf-8")
         return json_path
 
     monkeypatch.setattr("src.training.main.train_lightgbm_with_best_params", _fake_train)
@@ -311,8 +311,8 @@ def test_integration_pipeline_main_order(
 
     def _fake_evaluate_lightgbm_on_test(
         *,
-        parquet_path: str,
-        model_path: str,
+        parquet_path: Path,
+        model_path: Path,
         target_column: str,
         shap_output_dir: Path,
         shap_max_display: int,
@@ -353,7 +353,14 @@ def test_integration_pipeline_main_order(
 
     eval_dir = tmp_path / "results" / "eval"
     expected_json_path = eval_dir / "lightgbm_test_metrics.json"
-    monkeypatch.setattr("src.eval.main.save_training_results", lambda payload, json_path: (os.makedirs(os.path.dirname(json_path), exist_ok=True), Path(json_path).write_text(json.dumps(payload), encoding="utf-8"), json_path)[-1])
+    monkeypatch.setattr(
+        "src.eval.main.save_training_results",
+        lambda payload, json_path: (
+            json_path.parent.mkdir(parents=True, exist_ok=True),
+            json_path.write_text(json.dumps(payload), encoding="utf-8"),
+            json_path,
+        )[-1],
+    )
 
     # Clear previous captured stdout so we only parse eval outputs below
     capsys.readouterr()

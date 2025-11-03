@@ -13,35 +13,34 @@ from __future__ import annotations
 
 import argparse
 import sys
-from typing import Sequence
 from pathlib import Path
+from typing import Sequence
 
 project_root = Path(__file__).resolve().parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from src.constants import (
+from src.constants import (  # noqa: E402
     DATA_DIR,
     DEFAULT_FEATURE_IMPORTANCE_JSON_PATH,
     DEFAULT_FEATURE_IMPORTANCE_PLOT_PATH,
+    DEFAULT_PERMUTATION_N_JOBS,
+    DEFAULT_PERMUTATION_REPEATS,
     DEFAULT_RANDOM_STATE,
     DEFAULT_SPLITS_PARQUET_FILE,
-    PROJECT_ROOT,
     TARGET_COLUMN_CANDIDATES,
 )
 
-from src.utils import get_logger, load_splits_from_parquet, split_features_target
-from src.feature_engineering.feature_engineering import (
+from src.feature_engineering.feature_engineering import (  # noqa: E402
     compute_random_forest_permutation_importance,
     save_feature_importances_to_json,
     plot_feature_importances,
 )
-
-
-project_root = PROJECT_ROOT
-# WHY: allow running the module as a script without installing the package by ensuring imports resolve
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
+from src.utils import (  # noqa: E402
+    get_logger,
+    load_splits_from_parquet,
+    split_features_target,
+)  # noqa: E402
 
 
 LOGGER = get_logger(__name__)
@@ -87,7 +86,7 @@ def main() -> None:
     parser.add_argument(
         "--n-repeats",
         type=int,
-        default=10,
+        default=DEFAULT_PERMUTATION_REPEATS,
         help="Number of permutation repeats",
     )
     parser.add_argument(
@@ -99,8 +98,12 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    input_path = Path(args.input)
+    output_json_path = Path(args.output_json)
+    output_plot_path = Path(args.output_plot)
+
     # 1) Load splits
-    train_df, val_df, _test_df = load_splits_from_parquet(args.input)
+    train_df, val_df, _test_df = load_splits_from_parquet(input_path)
 
     # 2) Determine target
     target_col = args.target or _infer_target_column(list(train_df.columns))
@@ -117,15 +120,15 @@ def main() -> None:
         y_val,
         n_repeats=args.n_repeats,
         random_state=args.random_state,
-        n_jobs=-1,
+        n_jobs=DEFAULT_PERMUTATION_N_JOBS,
     )
 
     # 5) Save JSON
-    save_feature_importances_to_json(importance_df, args.output_json)
+    save_feature_importances_to_json(importance_df, output_json_path)
 
     # 6) Plot (best-effort if matplotlib missing)
     try:
-        plot_feature_importances(importance_df, args.output_plot, top_n=None)
+        plot_feature_importances(importance_df, output_plot_path, top_n=None)
     except RuntimeError as exc:
         if "matplotlib" in str(exc):
             LOGGER.warning("Plot skipped: %s", exc)
