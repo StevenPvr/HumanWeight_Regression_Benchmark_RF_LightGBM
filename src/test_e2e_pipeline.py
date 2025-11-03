@@ -24,7 +24,7 @@ except ModuleNotFoundError:  # pragma: no cover
     project_root = Path(__file__).resolve().parent.parent
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
-    from src.constants import DEFAULT_RANDOM_FOREST_SHAP_SAMPLE_SIZE, TARGET_COLUMN
+    from src.constants import TARGET_COLUMN
 
 
 def test_e2e_pipeline(
@@ -148,7 +148,7 @@ def test_e2e_pipeline(
 
     # Provide normalized columns as if produced by cleaning
     cleaned_df = raw_df.copy()
-    cleaned_df.columns = ["weight-(kg)", "physical-exercise", "gender", "age"]
+    cleaned_df.columns = [TARGET_COLUMN, "physical-exercise", "gender", "age"]
 
     monkeypatch.setattr(
         "src.data_preparation.main.pd.read_csv", lambda _p: cleaned_df.copy()
@@ -288,7 +288,7 @@ def test_e2e_pipeline(
             "--input",
             str(splits_parquet),
             "--target",
-            "weight-(kg)",
+            TARGET_COLUMN,
             "--output-json",
             str(out_json),
             "--output-plot",
@@ -342,7 +342,7 @@ def test_e2e_pipeline(
             "--out",
             str(out_model.with_suffix("")),
             "--target-column",
-            "weight-(kg)",
+            TARGET_COLUMN,
             "--random-state",
             "123",
             "--no-random-forest",  # ensure no persistent RF artifacts are created
@@ -430,7 +430,7 @@ def test_e2e_pipeline(
             "--model",
             str(out_model),
             "--target-column",
-            "weight-(kg)",
+            TARGET_COLUMN,
             "--batch-size",
             "2",
             "--n-jobs",

@@ -20,7 +20,6 @@ from src.data_preparation.data_preparation import (
     split_train_val_test,
 )
 from src.utils import save_splits_with_marker, save_label_encoders_mappings
-from sklearn.preprocessing import LabelEncoder
 from src.utils import proportional_allocation_indices
 from src.data_preparation.main import run_preparation_pipeline
 from src.constants import TARGET_COLUMN
