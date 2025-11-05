@@ -1,0 +1,183 @@
+{
+  "model_path": "results/models/lightgbm.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
+  "target_column": "weight-(kg)",
+  "metrics": {
+    "mae": 0.7397904988922172,
+    "mse": 1.6038381065632865,
+    "rmse": 1.2664273001492374,
+    "r2": 0.996456768470891,
+    "mape": 0.010491341348869166,
+    "median_ae": 0.47115262349007025,
+    "explained_variance": 0.9964569890962283,
+    "y_std": 21.275535405643144,
+    "pred_std": 20.99050308806199,
+    "residual_std": 1.266387871410612
+  },
+  "shap": {
+    "plot_path": "plots/shape/LightGBM/lightgbm_shap_beeswarm.png",
+    "expected_value": 73.78850011755267,
+    "feature_impacts": [
+      {
+        "feature": "water-intake-(liters)",
+        "max_positive": 22.84499488844716,
+        "max_negative": -19.74902477881181,
+        "positive_rate": 0.43075,
+        "negative_rate": 0.56925,
+        "max_intensity": 22.84499488844716
+      },
+      {
+        "feature": "cholesterol-mg",
+        "max_positive": 14.090466671304105,
+        "max_negative": -8.827645650690105,
+        "positive_rate": 0.458,
+        "negative_rate": 0.542,
+        "max_intensity": 14.090466671304105
+      },
+      {
+        "feature": "age",
+        "max_positive": 12.53787161797289,
+        "max_negative": -7.565586832369115,
+        "positive_rate": 0.4755,
+        "negative_rate": 0.5245,
+        "max_intensity": 12.53787161797289
+      },
+      {
+        "feature": "session-duration-(hours)",
+        "max_positive": 9.955912031828113,
+        "max_negative": -12.087199063041854,
+        "positive_rate": 0.5525,
+        "negative_rate": 0.4475,
+        "max_intensity": 12.087199063041854
+      },
+      {
+        "feature": "prep-time-min",
+        "max_positive": 11.076872381377502,
+        "max_negative": -5.638361836255038,
+        "positive_rate": 0.43725,
+        "negative_rate": 0.56275,
+        "max_intensity": 11.076872381377502
+      },
+      {
+        "feature": "avg-bpm",
+        "max_positive": 10.689355730465639,
+        "max_negative": -3.26405117510674,
+        "positive_rate": 0.44625,
+        "negative_rate": 0.55375,
+        "max_intensity": 10.689355730465639
+      },
+      {
+        "feature": "sugar-g",
+        "max_positive": 10.491184246222499,
+        "max_negative": -7.173063060251259,
+        "positive_rate": 0.4915,
+        "negative_rate": 0.5085,
+        "max_intensity": 10.491184246222499
+      },
+      {
+        "feature": "max-bpm",
+        "max_positive": 10.405909547031117,
+        "max_negative": -5.656857062313127,
+        "positive_rate": 0.4445,
+        "negative_rate": 0.5555,
+        "max_intensity": 10.405909547031117
+      },
+      {
+        "feature": "rating",
+        "max_positive": 9.356236005999142,
+        "max_negative": -6.177822792830153,
+        "positive_rate": 0.4465,
+        "negative_rate": 0.5535,
+        "max_intensity": 9.356236005999142
+      },
+      {
+        "feature": "serving-size-g",
+        "max_positive": 8.892109474755667,
+        "max_negative": -7.851336463441809,
+        "positive_rate": 0.43825,
+        "negative_rate": 0.56175,
+        "max_intensity": 8.892109474755667
+      },
+      {
+        "feature": "pct-maxhr",
+        "max_positive": 3.4871770472686925,
+        "max_negative": -8.684318518052207,
+        "positive_rate": 0.5365,
+        "negative_rate": 0.4635,
+        "max_intensity": 8.684318518052207
+      },
+      {
+        "feature": "cook-time-min",
+        "max_positive": 7.021721888816207,
+        "max_negative": -8.361952275884711,
+        "positive_rate": 0.4985,
+        "negative_rate": 0.5015,
+        "max_intensity": 8.361952275884711
+      },
+      {
+        "feature": "resting-bpm",
+        "max_positive": 7.766521925953542,
+        "max_negative": -4.011614327233449,
+        "positive_rate": 0.50525,
+        "negative_rate": 0.49475,
+        "max_intensity": 7.766521925953542
+      },
+      {
+        "feature": "sodium-mg",
+        "max_positive": 5.09948150773314,
+        "max_negative": -7.3195121585046845,
+        "positive_rate": 0.519,
+        "negative_rate": 0.481,
+        "max_intensity": 7.3195121585046845
+      },
+      {
+        "feature": "workout-frequency-(days/week)",
+        "max_positive": 4.7711705252349415,
+        "max_negative": -1.9444126275628435,
+        "positive_rate": 0.4625,
+        "negative_rate": 0.5375,
+        "max_intensity": 4.7711705252349415
+      },
+      {
+        "feature": "daily-meals-frequency",
+        "max_positive": 3.175685494295514,
+        "max_negative": -4.054888735019788,
+        "positive_rate": 0.6615,
+        "negative_rate": 0.3385,
+        "max_intensity": 4.054888735019788
+      },
+      {
+        "feature": "physical-exercise",
+        "max_positive": 0.9416315886795474,
+        "max_negative": -1.5411370965699485,
+        "positive_rate": 0.74475,
+        "negative_rate": 0.25525,
+        "max_intensity": 1.5411370965699485
+      },
+      {
+        "feature": "experience-level",
+        "max_positive": 1.0986030800577364,
+        "max_negative": -1.1725236105380032,
+        "positive_rate": 0.51175,
+        "negative_rate": 0.48825,
+        "max_intensity": 1.1725236105380032
+      },
+      {
+        "feature": "cooking-method_Boiled",
+        "max_positive": 0.05293708910142694,
+        "max_negative": -0.16886366052307783,
+        "positive_rate": 0.74025,
+        "negative_rate": 0.25975,
+        "max_intensity": 0.16886366052307783
+      },
+      {
+        "feature": "diet-type_Vegan",
+        "max_positive": 0.07091067287618616,
+        "max_negative": -0.1515180580361742,
+        "positive_rate": 0.67025,
+        "negative_rate": 0.32975,
+        "max_intensity": 0.1515180580361742
+      }
+    ]
+  }
+}

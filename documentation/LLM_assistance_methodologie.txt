@@ -1,0 +1,21 @@
+Assistance LLM – Méthodologie et périmètre
+
+Ce projet a été réalisé avec l’assistance d’un LLM UNIQUEMENT pour la rédaction des lignes de code.
+Tous les choix de méthodologie, d’architecture, de modèle, de métriques, ainsi que la définition
+et l’ordonnancement des fonctions ont été décidés exclusivement par l’auteur.
+
+Méthodologie employée
+- Création de l’ensemble de la méthodologie, de l’architecture, choix du modèle, choix des metrics,
+  choix des fonctions et ordre des fonctions UNIQUEMENT par l’auteur.
+- Avancement en écrivant une fonction à la fois et création du test unitaire associé, puis
+  exécution des tests unitaires à chaque itération.
+- Instruction explicite donnée au LLM d’écrire du code minimaliste (lisible, sans ajouts superflus).
+
+Rôle du LLM
+- Génération des lignes de code à partir de spécifications définies par l’auteur.
+- Pas d’initiative sur la conception méthodologique ni sur les décisions scientifiques.
+
+Responsabilités et validation
+- L’auteur relit, valide et interprète tous les résultats produits.
+- Les artefacts (résultats, rapports) et dépendances (requirements.txt) sont versionnés pour
+  assurer la traçabilité et la reproductibilité.

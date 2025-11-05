@@ -1,0 +1,18 @@
+{
+  "model_path": "results/models/random_forest.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
+  "target_column": "weight-(kg)",
+  "metrics": {
+    "mae": 1.7952446921632685,
+    "mse": 9.79707516744552,
+    "rmse": 3.1300279818949734,
+    "r2": 0.9783561037212617,
+    "mape": 0.02480853737490154,
+    "median_ae": 0.9358026364433165,
+    "explained_variance": 0.978357643131806,
+    "y_std": 21.275535405643144,
+    "pred_std": 19.331110289261094,
+    "residual_std": 3.129916669132782
+  },
+  "shap": null
+}

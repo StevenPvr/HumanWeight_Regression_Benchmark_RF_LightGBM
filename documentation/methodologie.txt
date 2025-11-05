@@ -1,0 +1,86 @@
+# Global methodology
+
+Cette fiche relie les notebooks d'exploration aux différents scripts CLI afin de documenter le flux complet depuis l'EDA jusqu'à l'évaluation finale. Elle reflète la refonte de la gestion des chemins (`src/constants.py` + `src.utils.to_project_relative_path`) et précise les points de contrôle à chaque étape.
+
+## 1. Notebooks d'exploration (EDA)
+
+### Analyse univariée (`notebooks/analyse_univariee.ipynb`)
+- Objectifs : explorer les distributions, identifier les valeurs aberrantes et constituer le premier export nettoyé.
+- Entrées : `data/dataset.csv`.
+- Sorties : `data/dataset_cleaned.csv` + histogrammes `plots/distribution/`.
+- Remarque : ce notebook se rejoue avant toute évolution de data cleaning afin de conserver un historique reproductible des décisions d'EDA.
+
+### Analyse bivariée & multivariée (`notebooks/analyse_bivariee_multivariee.ipynb`)
+- Objectifs : mesurer les corrélations, visualiser les relations cible/prédicteurs et profiler les catégories.
+- Entrées : `data/dataset_cleaned.csv` produit par l'EDA univariée.
+- Sorties : carte de corrélation `plots/matrice_corr/`, nuages de points `plots/correlation/`.
+- Remarque : les notebooks restent alignés sur les mêmes slugs de colonnes que le code grâce à `normalize_weigh_lifestyle_columns`.
+
+## 2. Pipeline automatisé (CLI)
+
+### Étape 1 : Nettoyage (`python -m src.data_cleaning.main`)
+- Entrée : `data/dataset_cleaned.csv`.
+- Traitements clés : normalisation systématique des noms, binarisation de `physical-exercise`, arrondi des métriques dérivées.
+- Sorties : `data/dataset_cleaned_final.(csv|parquet)` + `plots/distribution/new_physical_exercise_distribution.png`.
+- WHY : sécuriser un point de départ unique et versionné pour tous les scripts suivants (les répertoires sont créés si absents).
+
+### Étape 2 : Préparation (`python -m src.data_preparation.main`)
+- Entrée : `data/dataset_cleaned_final.csv` (ou `.parquet`).
+- Traitements clés : tirage du test sans regarder la cible, stratification train/val par quantiles, encodage OneHotEncoder (valeurs inconnues → vecteur tout-zéro par groupe).
+- Sorties : `data/dataset_splits_encoded.(csv|parquet)`, `data/encoders_mappings.(json|csv)`.
+- WHY : éviter la fuite d'information tout en gardant un unique fichier avec un marqueur `split` pour les analyses.
+
+### Étape 3 : Hyperparamètres (`python -m src.hyperparameters_optimization.main --models both`)
+- Entrée : `data/dataset_splits_encoded.parquet`.
+- Traitements clés : Optuna (TPE) sur un split train/val fixe, early stopping LightGBM, possibilité d'optimiser LightGBM, RandomForest ou les deux via `--models`.
+- Sorties : `results/best_lightgbm_params.json`, `results/best_random_forest_params.json` selon la sélection.
+- WHY : conserver un budget simple mais reproductible; le test reste intouché jusqu'à l'étape d'évaluation.
+
+### Étape 4 : Feature engineering (`python -m src.feature_engineering.main`)
+- Entrée : `data/dataset_splits_encoded.parquet`.
+- Traitements clés : entraînement RandomForest sur train, permutation importance sur val, export JSON + graphique.
+- Sorties : `results/feature_importances.json`, `plots/permutation/feature_importances.png`.
+- WHY : offrir une lecture rapide des variables dominantes sans rerun coûteux de SHAP.
+
+### Étape 5 : Entraînement (`python -m src.training.main --models both`)
+- Entrées : parquet à splits + JSON d'hyperparamètres.
+- Traitements clés : LightGBM ré-entraîné sur train+val avec seed contrôlé, métriques val recalculées, option RandomForest avec ses meilleurs paramètres (via `--models` ou `--also-random-forest`).
+- Sorties : `results/models/lightgbm.joblib`, `results/models/lightgbm_metrics.json`, artefacts RandomForest équivalents.
+- WHY : figer les modèles prêts pour l'évaluation finale et l'audit. Les chemins stockés dans les métriques sont convertis en relatifs.
+
+### Étape 6 : Évaluation (`python -m src.eval.main --models both`)
+- Entrées : parquet à splits, artefacts modèles.
+- Traitements clés : prédictions sur le split test uniquement, calcul MAE/MSE/RMSE/R²/etc., génération de rapports SHAP (PNG + résumé JSON) avec chemins relatifs.
+- Sorties : `results/eval/lightgbm_test_metrics.json`, `plots/shape/LightGBM/*.png`, équivalents RandomForest si présent.
+- WHY : séparer clairement les métriques de validation (tuning) et celles du test (communication finale).
+
+### Étape 7 : Orchestration globale
+- Commande : `python -m src.main_global`.
+- Comportement : enchaîne les six étapes précédentes dans l'ordre déclaré pour obtenir tous les artefacts en un seul run interactif.
+- Astuce : préparer les notebooks avant d'exécuter ce script afin que `dataset_cleaned.csv` soit cohérent.
+
+## 3. Ligne de données
+- `dataset.csv` → notebooks (EDA) → `dataset_cleaned.csv`.
+- `dataset_cleaned.csv` → script de nettoyage → `dataset_cleaned_final.(csv|parquet)`.
+- `dataset_cleaned_final` → préparation → splits encodés + mappings.
+- Splits encodés → feature importance, hyperopt, entraînement et évaluation.
+- Artefacts déposés dans `results/` et visualisations dans `plots/`.
+
+## 4. Commandes utiles
+- Nettoyage : `python -m src.data_cleaning.main`
+- Préparation : `python -m src.data_preparation.main`
+- Hyperparamètres : `python -m src.hyperparameters_optimization.main --models both`
+- Feature importance : `python -m src.feature_engineering.main`
+- Entraînement : `python -m src.training.main --models both`
+- Évaluation : `python -m src.eval.main --models both`
+- Tests unitaires : `pytest`
+- Tests ciblés : `pytest -k e2e`
+- End-to-end : `python -m src.main_global`
+
+## 5. Bonnes pratiques
+- Toujours rejouer l'EDA après un changement de structure pour garder `dataset_cleaned.csv` à jour.
+- Préserver les seeds (`DEFAULT_RANDOM_STATE` dans `src/constants.py`) lors des ré-exécutions pour comparer les métriques.
+- Vérifier `results/best_*_params.json` avant un nouvel entraînement; si absents, relancer l'étape hyperparamètres.
+- Conserver `data/encoders_mappings.*` dans le dépôt pour garantir une interprétation stable des colonnes catégorielles.
+- Remplacer les `print` par `src.utils.get_logger(__name__)` pour obtenir une journalisation uniforme (timestamps et niveaux) sur tous les scripts CLI.
+- Contrôler les chemins stockés dans les JSON avec `to_project_relative_path` lors de l'ajout de nouvelles sorties.

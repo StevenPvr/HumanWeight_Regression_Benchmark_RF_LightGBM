@@ -1,0 +1,167 @@
+[
+  {
+    "feature": "water-intake-(liters)",
+    "importance_mean": 0.982658683941304,
+    "importance_std": 0.0178885401133519
+  },
+  {
+    "feature": "age",
+    "importance_mean": 0.28451041824438994,
+    "importance_std": 0.011146091092571642
+  },
+  {
+    "feature": "session-duration-(hours)",
+    "importance_mean": 0.17171278879245913,
+    "importance_std": 0.004819967601794997
+  },
+  {
+    "feature": "cholesterol-mg",
+    "importance_mean": 0.13654209415135204,
+    "importance_std": 0.008453553703582126
+  },
+  {
+    "feature": "prep-time-min",
+    "importance_mean": 0.09605664777929088,
+    "importance_std": 0.0030144225654080226
+  },
+  {
+    "feature": "sugar-g",
+    "importance_mean": 0.09302452344409405,
+    "importance_std": 0.0042077100718931155
+  },
+  {
+    "feature": "serving-size-g",
+    "importance_mean": 0.0686426690589453,
+    "importance_std": 0.001844987092701967
+  },
+  {
+    "feature": "cook-time-min",
+    "importance_mean": 0.059862002461955555,
+    "importance_std": 0.002151458738002155
+  },
+  {
+    "feature": "sodium-mg",
+    "importance_mean": 0.05927540624476545,
+    "importance_std": 0.0014219807989381548
+  },
+  {
+    "feature": "max-bpm",
+    "importance_mean": 0.05412453377198315,
+    "importance_std": 0.0026128912281632084
+  },
+  {
+    "feature": "rating",
+    "importance_mean": 0.04450228892538376,
+    "importance_std": 0.0020117932855583318
+  },
+  {
+    "feature": "resting-bpm",
+    "importance_mean": 0.03286417406531006,
+    "importance_std": 0.0014790059868206849
+  },
+  {
+    "feature": "avg-bpm",
+    "importance_mean": 0.020720573664610786,
+    "importance_std": 0.0006935048057117535
+  },
+  {
+    "feature": "pct-maxhr",
+    "importance_mean": 0.02063646297914653,
+    "importance_std": 0.0009114580002082966
+  },
+  {
+    "feature": "workout-frequency-(days/week)",
+    "importance_mean": 0.015242363490022814,
+    "importance_std": 0.0006311705106346437
+  },
+  {
+    "feature": "experience-level",
+    "importance_mean": 0.01166464848317641,
+    "importance_std": 0.0004975211465162102
+  },
+  {
+    "feature": "daily-meals-frequency",
+    "importance_mean": 0.0032239991772926692,
+    "importance_std": 0.00019218084513818702
+  },
+  {
+    "feature": "physical-exercise",
+    "importance_mean": 0.0018153287007703577,
+    "importance_std": 0.00011276464144627048
+  },
+  {
+    "feature": "diet-type_Low-Carb",
+    "importance_mean": 1.4035304958026628e-06,
+    "importance_std": 1.1409902546871724e-06
+  },
+  {
+    "feature": "cooking-method_Grilled",
+    "importance_mean": 8.646389461519632e-07,
+    "importance_std": 1.8901878963091794e-06
+  },
+  {
+    "feature": "workout-type_Yoga",
+    "importance_mean": 5.238453510414409e-07,
+    "importance_std": 1.0780812534630722e-06
+  },
+  {
+    "feature": "cooking-method_Fried",
+    "importance_mean": 1.8937524333129118e-07,
+    "importance_std": 1.01642913968312e-06
+  },
+  {
+    "feature": "diet-type_Vegetarian",
+    "importance_mean": 1.3920390558030958e-07,
+    "importance_std": 1.1975051073173942e-06
+  },
+  {
+    "feature": "cooking-method_Roasted",
+    "importance_mean": 1.2981674502032803e-07,
+    "importance_std": 7.751991973469961e-07
+  },
+  {
+    "feature": "workout-type_Strength",
+    "importance_mean": -6.238282671544581e-08,
+    "importance_std": 9.546061525058667e-07
+  },
+  {
+    "feature": "cooking-method_Raw",
+    "importance_mean": -3.8163510762689867e-07,
+    "importance_std": 6.154666675026342e-07
+  },
+  {
+    "feature": "diet-type_Keto",
+    "importance_mean": -6.130247008906409e-07,
+    "importance_std": 8.47925677106632e-07
+  },
+  {
+    "feature": "cooking-method_Boiled",
+    "importance_mean": -8.223048634126151e-07,
+    "importance_std": 8.018313200544226e-07
+  },
+  {
+    "feature": "cooking-method_Steamed",
+    "importance_mean": -1.6985932099977675e-06,
+    "importance_std": 1.8409577617211584e-06
+  },
+  {
+    "feature": "gender_Male",
+    "importance_mean": -1.9820677439663647e-06,
+    "importance_std": 1.3632308431857216e-06
+  },
+  {
+    "feature": "diet-type_Vegan",
+    "importance_mean": -2.215385502846168e-06,
+    "importance_std": 1.8712736156094414e-06
+  },
+  {
+    "feature": "workout-type_HIIT",
+    "importance_mean": -2.5122154709178448e-06,
+    "importance_std": 2.7299541636984837e-06
+  },
+  {
+    "feature": "diet-type_Paleo",
+    "importance_mean": -3.1284919073670814e-06,
+    "importance_std": 2.0609290396664214e-06
+  }
+]
