@@ -1,0 +1,14 @@
+{
+  "best_params": {
+    "n_estimators": 1783,
+    "max_depth": 26,
+    "min_samples_split": 7,
+    "min_samples_leaf": 3,
+    "max_features": 0.3487586260895855,
+    "bootstrap": false
+  },
+  "best_value": 1.258771129595547,
+  "data_summary": {
+    "train_rows": 16000
+  }
+}

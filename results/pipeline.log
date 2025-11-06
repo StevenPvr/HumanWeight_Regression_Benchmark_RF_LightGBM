@@ -1,0 +1,330 @@
+2025-11-05 16:30:18,626 | INFO | src.data_cleaning.data_cleaning | Saved CSV to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-38/test_save_cleaned_dataset0/exports/test_output.csv
+2025-11-05 16:30:18,710 | INFO | src.data_cleaning.data_cleaning | Saved Parquet to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-38/test_save_cleaned_dataset0/exports/test_output.parquet
+2025-11-05 16:30:24,164 | INFO | src.data_preparation.main | Loading dataset from /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-39/test_run_preparation_pipeline_0/input.csv
+2025-11-05 16:30:24,166 | INFO | src.data_preparation.main | Loaded 8 rows x 3 columns
+2025-11-05 16:30:24,166 | INFO | src.data_preparation.main | Data shuffled (seed=123)
+2025-11-05 16:30:24,167 | INFO | src.data_preparation.main | Splits: train=6, test=2
+2025-11-05 16:30:24,181 | INFO | src.data_preparation.main | Splits saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-39/test_run_preparation_pipeline_0/splits.csv and /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-39/test_run_preparation_pipeline_0/splits.parquet
+2025-11-05 16:30:24,181 | INFO | src.data_preparation.main | Encoders mappings saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-39/test_run_preparation_pipeline_0/enc.json and /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-39/test_run_preparation_pipeline_0/enc.csv
+2025-11-05 16:30:30,821 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-05 16:30:30,822 | INFO | src.eval.main | Lightgbm evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:30:30,822 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.1, "mse": 0.01, "rmse": 0.1, "r2": 0.9, "mape": 0.05, "median_ae": 0.08, "explained_variance": 0.88, "y_std": 1.0, "pred_std": 0.95, "residual_std": 0.2}
+2025-11-05 16:30:30,822 | INFO | src.eval.main | LightGBM summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:30:30,822 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:30:30,825 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-05 16:30:30,826 | INFO | src.eval.main | Lightgbm evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:30:30,826 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.1, "mse": 0.01, "rmse": 0.1, "r2": 0.9, "mape": 0.05, "median_ae": 0.08, "explained_variance": 0.88, "y_std": 1.1, "pred_std": 0.9, "residual_std": 0.25}
+2025-11-05 16:30:30,826 | INFO | src.eval.main | LightGBM summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:30:30,826 | INFO | src.eval.main | Evaluating RandomForest on test split
+2025-11-05 16:30:30,826 | INFO | src.eval.main | Skipping SHAP computation for RandomForest to keep evaluation responsive.
+2025-11-05 16:30:30,826 | INFO | src.eval.main | Random_Forest evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_with_random_fore0/results/eval/random_forest_test_metrics.json
+2025-11-05 16:30:30,826 | INFO | src.eval.main | RandomForest metrics: {"mae": 0.2, "mse": 0.02, "rmse": 0.141421356, "r2": 0.85, "mape": 0.06, "median_ae": 0.1, "explained_variance": 0.8, "y_std": 1.2, "pred_std": 1.0, "residual_std": 0.3}
+2025-11-05 16:30:30,826 | INFO | src.eval.main | RandomForest summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_with_random_fore0/results/eval/random_forest_test_metrics.json
+2025-11-05 16:30:30,826 | ERROR | src.eval.main | Ridge model not found; expected at /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/ridge.joblib
+2025-11-05 16:30:30,827 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-40/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:32:40,802 | INFO | src.training.training | Loading dataset splits from /does/not/matter.parquet
+2025-11-05 16:32:40,802 | INFO | src.training.training | Train split: 80 rows
+2025-11-05 16:32:40,803 | INFO | src.training.training | Train shape: (80, 2)
+2025-11-05 16:32:40,803 | INFO | src.training.training | Loading best hyperparameters from /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_train_random_forest_with_0/results/best_lightgbm_params.json
+2025-11-05 16:32:40,803 | INFO | src.training.training | Best hyperparameters: {'n_estimators': 64, 'max_depth': 6, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 0.8, 'bootstrap': True}
+2025-11-05 16:32:40,803 | INFO | src.training.training | Fitting LightGBM on train split (no dedicated validation)
+2025-11-05 16:32:40,893 | INFO | src.training.training | Loading dataset splits from /unused.parquet
+2025-11-05 16:32:40,894 | INFO | src.training.training | Train split: 60 rows
+2025-11-05 16:32:40,894 | INFO | src.training.training | Train shape: (60, 2)
+2025-11-05 16:32:40,894 | INFO | src.training.training | Loading best hyperparameters from /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_save_random_forest_model_0/results/best_lgbm_params.json
+2025-11-05 16:32:40,894 | INFO | src.training.training | Best hyperparameters: {'n_estimators': 32, 'max_depth': 5}
+2025-11-05 16:32:40,894 | INFO | src.training.training | Fitting LightGBM on train split (no dedicated validation)
+2025-11-05 16:32:40,940 | INFO | src.training.main | Starting training pipeline
+2025-11-05 16:32:40,940 | INFO | src.training.main | Using dataset: dummy.parquet
+2025-11-05 16:32:40,941 | INFO | src.training.main | Using parameters: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_trains_and_saves0/params.json
+2025-11-05 16:32:40,941 | INFO | src.training.main | Model artifact target: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_trains_and_saves0/out/rf_model
+2025-11-05 16:32:40,941 | INFO | src.training.main | Target column: weight-(kg) | Random state: 123
+2025-11-05 16:32:40,941 | INFO | src.training.main | Dataset splits loaded for diagnostics (train=10)
+2025-11-05 16:32:40,941 | INFO | src.training.main | Model trained; persisting artifact
+2025-11-05 16:32:40,941 | INFO | src.training.main | Model saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_trains_and_saves0/out/rf_model.joblib
+2025-11-05 16:32:40,941 | INFO | src.training.main | Training summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_trains_and_saves0/out/rf_model_metrics.json
+2025-11-05 16:32:40,941 | INFO | src.training.main | Trained model artifact saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_trains_and_saves0/out/rf_model.joblib
+2025-11-05 16:32:40,944 | INFO | src.training.main | Starting training pipeline
+2025-11-05 16:32:40,944 | INFO | src.training.main | Using dataset: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_uses_defaults0/splits.parquet
+2025-11-05 16:32:40,944 | INFO | src.training.main | Using parameters: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_uses_defaults0/best_params.json
+2025-11-05 16:32:40,944 | INFO | src.training.main | Model artifact target: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_uses_defaults0/artifacts/random_forest
+2025-11-05 16:32:40,944 | INFO | src.training.main | Target column: weight-(kg) | Random state: 123
+2025-11-05 16:32:40,944 | INFO | src.training.main | Dataset splits loaded for diagnostics (train=12)
+2025-11-05 16:32:40,944 | INFO | src.training.main | Model trained; persisting artifact
+2025-11-05 16:32:40,944 | INFO | src.training.main | Model saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_uses_defaults0/artifacts/random_forest.joblib
+2025-11-05 16:32:40,944 | INFO | src.training.main | Training summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_uses_defaults0/artifacts/lightgbm_metrics.json
+2025-11-05 16:32:40,944 | INFO | src.training.main | Trained model artifact saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-44/test_cli_main_uses_defaults0/artifacts/random_forest.joblib
+2025-11-05 16:34:43,241 | INFO | src.data_cleaning.data_cleaning | Saved CSV to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-52/test_save_cleaned_dataset0/exports/test_output.csv
+2025-11-05 16:34:43,300 | INFO | src.data_cleaning.data_cleaning | Saved Parquet to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-52/test_save_cleaned_dataset0/exports/test_output.parquet
+2025-11-05 16:34:43,569 | INFO | src.data_preparation.main | Loading dataset from /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-53/test_run_preparation_pipeline_0/input.csv
+2025-11-05 16:34:43,572 | INFO | src.data_preparation.main | Loaded 8 rows x 3 columns
+2025-11-05 16:34:43,577 | INFO | src.data_preparation.main | Data shuffled (seed=123)
+2025-11-05 16:34:43,578 | INFO | src.data_preparation.main | Splits: train=6, test=2
+2025-11-05 16:34:43,595 | INFO | src.data_preparation.main | Splits saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-53/test_run_preparation_pipeline_0/splits.csv and /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-53/test_run_preparation_pipeline_0/splits.parquet
+2025-11-05 16:34:43,597 | INFO | src.data_preparation.main | Encoders mappings saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-53/test_run_preparation_pipeline_0/enc.json and /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-53/test_run_preparation_pipeline_0/enc.csv
+2025-11-05 16:35:03,692 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Best hyperparameters:
+2025-11-05 16:35:03,693 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 10
+2025-11-05 16:35:03,693 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Results saved to: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_lightgbm_params.json
+2025-11-05 16:35:03,693 | INFO | src.hyperparameters_optimization.main | [Hyperopt] Optimizing RandomForest...
+2025-11-05 16:35:03,694 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Best hyperparameters:
+2025-11-05 16:35:03,694 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 20
+2025-11-05 16:35:03,694 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Results saved to: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_random_forest_params.json
+2025-11-05 16:35:03,696 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Best hyperparameters:
+2025-11-05 16:35:03,696 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 10
+2025-11-05 16:35:03,697 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Results saved to: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_lightgbm_params.json
+2025-11-05 16:35:03,698 | INFO | src.hyperparameters_optimization.main | [Hyperopt] Optimizing RandomForest...
+2025-11-05 16:35:03,698 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Best hyperparameters:
+2025-11-05 16:35:03,699 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 20
+2025-11-05 16:35:03,699 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Results saved to: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_random_forest_params.json
+2025-11-05 16:35:08,984 | INFO | src.training.training | Loading dataset splits from /does/not/matter.parquet
+2025-11-05 16:35:08,985 | INFO | src.training.training | Train split: 80 rows
+2025-11-05 16:35:08,985 | INFO | src.training.training | Train shape: (80, 2)
+2025-11-05 16:35:08,986 | INFO | src.training.training | Loading best hyperparameters from /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_train_random_forest_with_0/results/best_lightgbm_params.json
+2025-11-05 16:35:08,986 | INFO | src.training.training | Best hyperparameters: {'n_estimators': 64, 'max_depth': 6, 'min_samples_split': 2, 'min_samples_leaf': 1, 'max_features': 0.8, 'bootstrap': True}
+2025-11-05 16:35:08,986 | INFO | src.training.training | Fitting LightGBM on train split (no dedicated validation)
+2025-11-05 16:35:09,052 | INFO | src.training.training | Loading dataset splits from /unused.parquet
+2025-11-05 16:35:09,053 | INFO | src.training.training | Train split: 60 rows
+2025-11-05 16:35:09,053 | INFO | src.training.training | Train shape: (60, 2)
+2025-11-05 16:35:09,054 | INFO | src.training.training | Loading best hyperparameters from /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_save_random_forest_model_0/results/best_lgbm_params.json
+2025-11-05 16:35:09,054 | INFO | src.training.training | Best hyperparameters: {'n_estimators': 32, 'max_depth': 5}
+2025-11-05 16:35:09,054 | INFO | src.training.training | Fitting LightGBM on train split (no dedicated validation)
+2025-11-05 16:35:09,080 | INFO | src.training.main | Starting training pipeline
+2025-11-05 16:35:09,080 | INFO | src.training.main | Using dataset: dummy.parquet
+2025-11-05 16:35:09,081 | INFO | src.training.main | Using parameters: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_trains_and_saves0/params.json
+2025-11-05 16:35:09,081 | INFO | src.training.main | Model artifact target: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_trains_and_saves0/out/rf_model
+2025-11-05 16:35:09,081 | INFO | src.training.main | Target column: weight-(kg) | Random state: 123
+2025-11-05 16:35:09,082 | INFO | src.training.main | Dataset splits loaded for diagnostics (train=10)
+2025-11-05 16:35:09,082 | INFO | src.training.main | Model trained; persisting artifact
+2025-11-05 16:35:09,082 | INFO | src.training.main | Model saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_trains_and_saves0/out/rf_model.joblib
+2025-11-05 16:35:09,083 | INFO | src.training.main | Training summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_trains_and_saves0/out/rf_model_metrics.json
+2025-11-05 16:35:09,083 | INFO | src.training.main | Trained model artifact saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_trains_and_saves0/out/rf_model.joblib
+2025-11-05 16:35:09,086 | INFO | src.training.main | Starting training pipeline
+2025-11-05 16:35:09,086 | INFO | src.training.main | Using dataset: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_uses_defaults0/splits.parquet
+2025-11-05 16:35:09,086 | INFO | src.training.main | Using parameters: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_uses_defaults0/best_params.json
+2025-11-05 16:35:09,087 | INFO | src.training.main | Model artifact target: /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_uses_defaults0/artifacts/random_forest
+2025-11-05 16:35:09,087 | INFO | src.training.main | Target column: weight-(kg) | Random state: 123
+2025-11-05 16:35:09,087 | INFO | src.training.main | Dataset splits loaded for diagnostics (train=12)
+2025-11-05 16:35:09,088 | INFO | src.training.main | Model trained; persisting artifact
+2025-11-05 16:35:09,088 | INFO | src.training.main | Model saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_uses_defaults0/artifacts/random_forest.joblib
+2025-11-05 16:35:09,088 | INFO | src.training.main | Training summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_uses_defaults0/artifacts/lightgbm_metrics.json
+2025-11-05 16:35:09,089 | INFO | src.training.main | Trained model artifact saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-55/test_cli_main_uses_defaults0/artifacts/random_forest.joblib
+2025-11-05 16:35:10,003 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-05 16:35:10,004 | INFO | src.eval.main | Lightgbm evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:35:10,004 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.1, "mse": 0.01, "rmse": 0.1, "r2": 0.9, "mape": 0.05, "median_ae": 0.08, "explained_variance": 0.88, "y_std": 1.0, "pred_std": 0.95, "residual_std": 0.2}
+2025-11-05 16:35:10,005 | INFO | src.eval.main | LightGBM summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:35:10,005 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:35:10,007 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-05 16:35:10,008 | INFO | src.eval.main | Lightgbm evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:35:10,008 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.1, "mse": 0.01, "rmse": 0.1, "r2": 0.9, "mape": 0.05, "median_ae": 0.08, "explained_variance": 0.88, "y_std": 1.1, "pred_std": 0.9, "residual_std": 0.25}
+2025-11-05 16:35:10,008 | INFO | src.eval.main | LightGBM summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:35:10,009 | INFO | src.eval.main | Evaluating RandomForest on test split
+2025-11-05 16:35:10,009 | INFO | src.eval.main | Skipping SHAP computation for RandomForest to keep evaluation responsive.
+2025-11-05 16:35:10,010 | INFO | src.eval.main | Random_Forest evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_with_random_fore0/results/eval/random_forest_test_metrics.json
+2025-11-05 16:35:10,010 | INFO | src.eval.main | RandomForest metrics: {"mae": 0.2, "mse": 0.02, "rmse": 0.141421356, "r2": 0.85, "mape": 0.06, "median_ae": 0.1, "explained_variance": 0.8, "y_std": 1.2, "pred_std": 1.0, "residual_std": 0.3}
+2025-11-05 16:35:10,010 | INFO | src.eval.main | RandomForest summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_with_random_fore0/results/eval/random_forest_test_metrics.json
+2025-11-05 16:35:10,010 | ERROR | src.eval.main | Ridge model not found; expected at /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/ridge.joblib
+2025-11-05 16:35:10,011 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-56/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 16:35:10,289 | INFO | src.baseline.main | Starting Ridge hyperparameter optimization
+2025-11-05 16:35:10,290 | INFO | src.baseline.main | Best Ridge params saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-57/test_cli_optimize_and_train0/results/best_ridge_params.json
+2025-11-05 16:35:10,291 | INFO | src.baseline.main | Training Ridge model
+2025-11-05 16:35:10,292 | INFO | src.baseline.main | Ridge artifacts stubbed to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-57/test_cli_optimize_and_train0/results/models/ridge.joblib and /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-57/test_cli_optimize_and_train0/results/models/ridge_scaler.joblib
+2025-11-05 17:17:06,245 | INFO | __main__ | Running data_cleaning
+2025-11-05 17:17:06,246 | INFO | src.data_cleaning.main | Loading dataset from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned.csv
+2025-11-05 17:17:06,272 | INFO | src.data_cleaning.main | Loaded 20000 rows and 23 columns
+2025-11-05 17:17:06,279 | INFO | src.data_cleaning.main | Cleaning steps applied (normalize, binarize, round)
+2025-11-05 17:17:06,523 | INFO | src.data_cleaning.main | Distribution plot saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/plots/distribution/new_physical_exercise_distribution.png
+2025-11-05 17:17:06,605 | INFO | src.data_cleaning.data_cleaning | Saved CSV to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned_final.csv
+2025-11-05 17:17:06,686 | INFO | src.data_cleaning.data_cleaning | Saved Parquet to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned_final.parquet
+2025-11-05 17:17:06,686 | INFO | src.data_cleaning.main | Pipeline completed successfully
+2025-11-05 17:17:06,686 | INFO | __main__ | Running data_preparation
+2025-11-05 17:17:06,686 | INFO | src.data_preparation.main | Loading dataset from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned_final.csv
+2025-11-05 17:17:06,708 | INFO | src.data_preparation.main | Loaded 20000 rows x 23 columns
+2025-11-05 17:17:06,712 | INFO | src.data_preparation.main | Data shuffled (seed=123)
+2025-11-05 17:17:06,715 | INFO | src.data_preparation.main | Splits: train=16000, test=4000
+2025-11-05 17:17:06,927 | INFO | src.data_preparation.main | Splits saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.csv and /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-05 17:17:06,929 | INFO | src.data_preparation.main | Encoders mappings saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/encoders_mappings.json and /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/encoders_mappings.csv
+2025-11-05 17:17:06,930 | INFO | __main__ | Running hyperparameters_optimization
+2025-11-05 17:51:43,907 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Best hyperparameters:
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 1166
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - learning_rate: 0.08495160621047627
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - num_leaves: 257
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - max_depth: 18
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - min_child_samples: 100
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - subsample: 0.5613277034603019
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - colsample_bytree: 0.86405352262954
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - reg_lambda: 69.21219239466598
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main |   - reg_alpha: 11.188984942065268
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Results saved to: results/best_lightgbm_params.json
+2025-11-05 17:51:43,909 | INFO | src.hyperparameters_optimization.main | [Hyperopt] Optimizing RandomForest...
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Best hyperparameters:
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 1497
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main |   - max_depth: 29
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main |   - min_samples_split: 9
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main |   - min_samples_leaf: 1
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main |   - max_features: 0.38157692468479576
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main |   - bootstrap: False
+2025-11-05 18:14:24,910 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Results saved to: results/best_random_forest_params.json
+2025-11-05 18:14:24,911 | INFO | __main__ | Running feature_engineering
+2025-11-05 18:14:46,148 | INFO | __main__ | Running training
+2025-11-05 18:14:46,149 | INFO | src.training.main | Starting training pipeline
+2025-11-05 18:14:46,149 | INFO | src.training.main | Using dataset: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-05 18:14:46,149 | INFO | src.training.main | Using parameters: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_lightgbm_params.json
+2025-11-05 18:14:46,149 | INFO | src.training.main | Model artifact target: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/lightgbm
+2025-11-05 18:14:46,149 | INFO | src.training.main | Target column: weight-(kg) | Random state: 123
+2025-11-05 18:20:32,877 | INFO | src.training.main | Dataset splits loaded for diagnostics (train=16000)
+2025-11-05 18:20:32,877 | INFO | src.training.training | Loading dataset splits from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-05 18:20:32,886 | INFO | src.training.training | Train split: 16000 rows
+2025-11-05 18:20:32,888 | INFO | src.training.training | Train shape: (16000, 33)
+2025-11-05 18:20:32,889 | INFO | src.training.training | Loading best hyperparameters from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_lightgbm_params.json
+2025-11-05 18:20:32,889 | INFO | src.training.training | Best hyperparameters: {'n_estimators': 1166, 'learning_rate': 0.08495160621047627, 'num_leaves': 257, 'max_depth': 18, 'min_child_samples': 100, 'subsample': 0.5613277034603019, 'colsample_bytree': 0.86405352262954, 'reg_lambda': 69.21219239466598, 'reg_alpha': 11.188984942065268}
+2025-11-05 18:20:32,890 | INFO | src.training.training | Fitting LightGBM on train split (no dedicated validation)
+2025-11-05 18:20:47,111 | INFO | src.training.main | Model trained; persisting artifact
+2025-11-05 18:20:47,147 | INFO | src.training.main | Model saved to results/models/lightgbm.joblib
+2025-11-05 18:20:47,148 | INFO | src.training.main | Training summary saved to results/models/lightgbm_metrics.json
+2025-11-05 18:20:47,149 | INFO | src.training.main | RandomForest hyperparameters after merge: n_estimators=1497 | n_jobs=-1
+2025-11-05 18:20:56,716 | INFO | src.training.main | RandomForest saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/random_forest.joblib
+2025-11-05 18:20:56,717 | INFO | src.training.main | RandomForest training summary saved to results/models/random_forest_metrics.json
+2025-11-05 18:20:56,717 | INFO | src.training.main | Trained model artifact saved to results/models/lightgbm.joblib
+2025-11-05 18:20:56,807 | INFO | __main__ | Running eval
+2025-11-05 18:28:07,608 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-05 18:28:14,904 | INFO | src.eval.main | Lightgbm evaluation summary saved to results/eval/lightgbm_test_metrics.json
+2025-11-05 18:28:14,904 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.7635988687889899, "mse": 1.29865196927688, "rmse": 1.1395841211937274, "r2": 0.9971309918475866, "mape": 0.010876131144226718, "median_ae": 0.538481728419093, "explained_variance": 0.9971313975930942, "y_std": 21.275535405643144, "pred_std": 21.110415740565173, "residual_std": 1.139503536290815}
+2025-11-05 18:28:14,904 | INFO | src.eval.main | LightGBM summary saved to results/eval/lightgbm_test_metrics.json
+2025-11-05 18:28:14,904 | INFO | src.eval.main | Evaluating RandomForest on test split
+2025-11-05 18:28:14,904 | INFO | src.eval.main | Skipping SHAP computation for RandomForest to keep evaluation responsive.
+2025-11-05 18:28:16,082 | INFO | src.eval.main | Random_Forest evaluation summary saved to results/eval/random_forest_test_metrics.json
+2025-11-05 18:28:16,082 | INFO | src.eval.main | RandomForest metrics: {"mae": 0.47459560073415497, "mse": 0.5646456012590361, "rmse": 0.7514290394036126, "r2": 0.9987525735365892, "mape": 0.00672801842603274, "median_ae": 0.344169742924894, "explained_variance": 0.9987541040123907, "y_std": 21.275535405643144, "pred_std": 21.057504323966935, "residual_std": 0.7509679312899009}
+2025-11-05 18:28:16,082 | INFO | src.eval.main | RandomForest summary saved to results/eval/random_forest_test_metrics.json
+2025-11-05 18:28:16,082 | ERROR | src.eval.main | Ridge model not found; expected at /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/ridge.joblib
+2025-11-05 18:28:16,082 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at results/eval/lightgbm_test_metrics.json
+2025-11-05 18:28:16,082 | INFO | __main__ | Running baseline: ridge optimize
+2025-11-05 18:28:16,082 | INFO | src.baseline.main | Starting Ridge hyperparameter optimization
+2025-11-05 18:28:18,460 | INFO | src.baseline.main | Best Ridge params saved to results/best_ridge_params.json
+2025-11-05 18:28:18,460 | INFO | __main__ | Running baseline: ridge train
+2025-11-05 18:28:18,460 | INFO | src.baseline.main | Training Ridge model
+2025-11-05 18:28:18,460 | INFO | src.baseline.ridge | Loading dataset splits from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-05 18:28:18,472 | INFO | src.baseline.ridge | Train split: 16000 rows
+2025-11-05 18:28:18,472 | INFO | src.baseline.ridge | Train shape: (16000, 33)
+2025-11-05 18:28:18,472 | INFO | src.baseline.ridge | Loading best hyperparameters from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_ridge_params.json
+2025-11-05 18:28:18,472 | INFO | src.baseline.ridge | Best hyperparameters: {'alpha': 99.80440043399787}
+2025-11-05 18:28:18,473 | INFO | src.baseline.ridge | Fitting Ridge pipeline with alpha=99.8044
+2025-11-05 18:28:18,483 | INFO | src.baseline.main | Ridge model saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/ridge.joblib
+2025-11-05 18:28:18,484 | INFO | src.baseline.main | Ridge scaler saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/ridge_scaler.joblib
+2025-11-05 18:53:14,853 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-05 18:53:14,854 | INFO | src.eval.main | Lightgbm evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:14,854 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.1, "mse": 0.01, "rmse": 0.1, "r2": 0.9, "mape": 0.05, "median_ae": 0.08, "explained_variance": 0.88, "y_std": 1.0, "pred_std": 0.95, "residual_std": 0.2}
+2025-11-05 18:53:14,855 | INFO | src.eval.main | LightGBM summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:14,855 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_lightgbm_only0/results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:14,857 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-05 18:53:14,857 | INFO | src.eval.main | Lightgbm evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:14,857 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.1, "mse": 0.01, "rmse": 0.1, "r2": 0.9, "mape": 0.05, "median_ae": 0.08, "explained_variance": 0.88, "y_std": 1.1, "pred_std": 0.9, "residual_std": 0.25}
+2025-11-05 18:53:14,857 | INFO | src.eval.main | LightGBM summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:14,857 | INFO | src.eval.main | Evaluating RandomForest on test split
+2025-11-05 18:53:14,857 | INFO | src.eval.main | Skipping SHAP computation for RandomForest to keep evaluation responsive.
+2025-11-05 18:53:14,858 | INFO | src.eval.main | Random_Forest evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_with_random_fore0/results/eval/random_forest_test_metrics.json
+2025-11-05 18:53:14,858 | INFO | src.eval.main | RandomForest metrics: {"mae": 0.2, "mse": 0.02, "rmse": 0.141421356, "r2": 0.85, "mape": 0.06, "median_ae": 0.1, "explained_variance": 0.8, "y_std": 1.2, "pred_std": 1.0, "residual_std": 0.3}
+2025-11-05 18:53:14,858 | INFO | src.eval.main | RandomForest summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_with_random_fore0/results/eval/random_forest_test_metrics.json
+2025-11-05 18:53:14,858 | INFO | src.eval.main | Evaluating Ridge on test split
+2025-11-05 18:53:15,015 | INFO | src.eval.main | Ridge evaluation summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_with_random_fore0/results/eval/ridge_test_metrics.json
+2025-11-05 18:53:15,016 | INFO | src.eval.main | Ridge metrics: {"mae": 14.670643705748095, "mse": 364.9581642119614, "rmse": 19.103878250553247, "r2": 0.1937270545264147, "mape": 0.20785509209919434, "median_ae": 11.111434778754273, "explained_variance": 0.19414834092956146, "y_std": 21.275535405643144, "pred_std": 9.411900062860727, "residual_std": 19.098886606102774}
+2025-11-05 18:53:15,018 | INFO | src.eval.main | Ridge summary saved to /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_with_random_fore0/results/eval/ridge_test_metrics.json
+2025-11-05 18:53:15,018 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at /private/var/folders/65/hx23vh515nnfb35ysjpxbn540000gn/T/pytest-of-steven/pytest-58/test_cli_eval_with_random_fore0/results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:48,500 | INFO | __main__ | Evaluating LightGBM on test split
+2025-11-05 18:53:56,119 | INFO | __main__ | Lightgbm evaluation summary saved to results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:56,120 | INFO | __main__ | LightGBM metrics: {"mae": 0.7635988687889899, "mse": 1.29865196927688, "rmse": 1.1395841211937274, "r2": 0.9971309918475866, "mape": 0.010876131144226718, "median_ae": 0.538481728419093, "explained_variance": 0.9971313975930942, "y_std": 21.275535405643144, "pred_std": 21.110415740565173, "residual_std": 1.139503536290815}
+2025-11-05 18:53:56,120 | INFO | __main__ | LightGBM summary saved to results/eval/lightgbm_test_metrics.json
+2025-11-05 18:53:56,120 | INFO | __main__ | Evaluating RandomForest on test split
+2025-11-05 18:53:56,120 | INFO | __main__ | Skipping SHAP computation for RandomForest to keep evaluation responsive.
+2025-11-05 18:53:57,470 | INFO | __main__ | Random_Forest evaluation summary saved to results/eval/random_forest_test_metrics.json
+2025-11-05 18:53:57,470 | INFO | __main__ | RandomForest metrics: {"mae": 0.474595600734155, "mse": 0.5646456012590361, "rmse": 0.7514290394036126, "r2": 0.9987525735365892, "mape": 0.00672801842603274, "median_ae": 0.3441697429249011, "explained_variance": 0.9987541040123907, "y_std": 21.275535405643144, "pred_std": 21.057504323966935, "residual_std": 0.7509679312899009}
+2025-11-05 18:53:57,470 | INFO | __main__ | RandomForest summary saved to results/eval/random_forest_test_metrics.json
+2025-11-05 18:53:57,470 | INFO | __main__ | Evaluating Ridge on test split
+2025-11-05 18:53:57,524 | INFO | __main__ | Ridge evaluation summary saved to results/eval/ridge_test_metrics.json
+2025-11-05 18:53:57,524 | INFO | __main__ | Ridge metrics: {"mae": 14.670643705748095, "mse": 364.9581642119614, "rmse": 19.103878250553247, "r2": 0.1937270545264147, "mape": 0.20785509209919434, "median_ae": 11.111434778754273, "explained_variance": 0.19414834092956146, "y_std": 21.275535405643144, "pred_std": 9.411900062860727, "residual_std": 19.098886606102774}
+2025-11-05 18:53:57,524 | INFO | __main__ | Ridge summary saved to results/eval/ridge_test_metrics.json
+2025-11-05 18:53:57,524 | INFO | __main__ | LightGBM evaluation artifact confirmed at results/eval/lightgbm_test_metrics.json
+2025-11-06 08:04:16,124 | INFO | __main__ | Running data_cleaning
+2025-11-06 08:04:16,124 | INFO | src.data_cleaning.main | Loading dataset from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned.csv
+2025-11-06 08:04:16,150 | INFO | src.data_cleaning.main | Loaded 20000 rows and 22 columns
+2025-11-06 08:04:16,158 | INFO | src.data_cleaning.main | Cleaning steps applied (normalize, binarize, round)
+2025-11-06 08:04:16,409 | INFO | src.data_cleaning.main | Distribution plot saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/plots/distribution/new_physical_exercise_distribution.png
+2025-11-06 08:04:16,486 | INFO | src.data_cleaning.data_cleaning | Saved CSV to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned_final.csv
+2025-11-06 08:04:16,563 | INFO | src.data_cleaning.data_cleaning | Saved Parquet to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned_final.parquet
+2025-11-06 08:04:16,563 | INFO | src.data_cleaning.main | Pipeline completed successfully
+2025-11-06 08:04:16,563 | INFO | __main__ | Running data_preparation
+2025-11-06 08:04:16,563 | INFO | src.data_preparation.main | Loading dataset from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_cleaned_final.csv
+2025-11-06 08:04:16,583 | INFO | src.data_preparation.main | Loaded 20000 rows x 22 columns
+2025-11-06 08:04:16,587 | INFO | src.data_preparation.main | Data shuffled (seed=123)
+2025-11-06 08:04:16,590 | INFO | src.data_preparation.main | Splits: train=16000, test=4000
+2025-11-06 08:04:16,815 | INFO | src.data_preparation.main | Splits saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.csv and /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-06 08:04:16,816 | INFO | src.data_preparation.main | Encoders mappings saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/encoders_mappings.json and /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/encoders_mappings.csv
+2025-11-06 08:04:16,817 | INFO | __main__ | Running hyperparameters_optimization
+2025-11-06 09:09:18,982 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Best hyperparameters:
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 1240
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - learning_rate: 0.033475989928947014
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - num_leaves: 317
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - max_depth: 14
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - min_child_samples: 29
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - subsample: 0.9857826959874048
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - colsample_bytree: 0.5002531173970539
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - reg_lambda: 73.91530744014005
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main |   - reg_alpha: 17.590104982168974
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main | [Hyperopt][LGBM] Results saved to: results/best_lightgbm_params.json
+2025-11-06 09:09:18,983 | INFO | src.hyperparameters_optimization.main | [Hyperopt] Optimizing RandomForest...
+2025-11-06 09:32:10,001 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Best hyperparameters:
+2025-11-06 09:32:10,002 | INFO | src.hyperparameters_optimization.main |   - n_estimators: 1783
+2025-11-06 09:32:10,002 | INFO | src.hyperparameters_optimization.main |   - max_depth: 26
+2025-11-06 09:32:10,002 | INFO | src.hyperparameters_optimization.main |   - min_samples_split: 7
+2025-11-06 09:32:10,002 | INFO | src.hyperparameters_optimization.main |   - min_samples_leaf: 3
+2025-11-06 09:32:10,002 | INFO | src.hyperparameters_optimization.main |   - max_features: 0.3487586260895855
+2025-11-06 09:32:10,002 | INFO | src.hyperparameters_optimization.main |   - bootstrap: False
+2025-11-06 09:32:10,002 | INFO | src.hyperparameters_optimization.main | [Hyperopt][RF] Results saved to: results/best_random_forest_params.json
+2025-11-06 09:32:10,002 | INFO | __main__ | Running feature_engineering
+2025-11-06 09:32:32,302 | INFO | __main__ | Running training
+2025-11-06 09:32:32,303 | INFO | src.training.main | Starting training pipeline
+2025-11-06 09:32:32,303 | INFO | src.training.main | Using dataset: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-06 09:32:32,303 | INFO | src.training.main | Using parameters: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_lightgbm_params.json
+2025-11-06 09:32:32,303 | INFO | src.training.main | Model artifact target: /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/lightgbm
+2025-11-06 09:32:32,303 | INFO | src.training.main | Target column: weight-(kg) | Random state: 123
+2025-11-06 09:32:40,487 | INFO | src.training.main | Dataset splits loaded for diagnostics (train=16000)
+2025-11-06 09:32:40,488 | INFO | src.training.training | Loading dataset splits from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-06 09:32:40,498 | INFO | src.training.training | Train split: 16000 rows
+2025-11-06 09:32:40,500 | INFO | src.training.training | Train shape: (16000, 32)
+2025-11-06 09:32:40,502 | INFO | src.training.training | Loading best hyperparameters from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_lightgbm_params.json
+2025-11-06 09:32:40,502 | INFO | src.training.training | Best hyperparameters: {'n_estimators': 1240, 'learning_rate': 0.033475989928947014, 'num_leaves': 317, 'max_depth': 14, 'min_child_samples': 29, 'subsample': 0.9857826959874048, 'colsample_bytree': 0.5002531173970539, 'reg_lambda': 73.91530744014005, 'reg_alpha': 17.590104982168974}
+2025-11-06 09:32:40,503 | INFO | src.training.training | Fitting LightGBM on train split (no dedicated validation)
+2025-11-06 09:33:05,467 | INFO | src.training.main | Model trained; persisting artifact
+2025-11-06 09:33:05,535 | INFO | src.training.main | Model saved to results/models/lightgbm.joblib
+2025-11-06 09:33:05,536 | INFO | src.training.main | Training summary saved to results/models/lightgbm_metrics.json
+2025-11-06 09:33:05,537 | INFO | src.training.main | RandomForest hyperparameters after merge: n_estimators=1783 | n_jobs=-1
+2025-11-06 09:33:16,633 | INFO | src.training.main | RandomForest saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/random_forest.joblib
+2025-11-06 09:33:16,634 | INFO | src.training.main | RandomForest training summary saved to results/models/random_forest_metrics.json
+2025-11-06 09:33:16,634 | INFO | src.training.main | Trained model artifact saved to results/models/lightgbm.joblib
+2025-11-06 09:33:16,870 | INFO | __main__ | Running baseline: ridge optimize
+2025-11-06 09:33:16,871 | INFO | src.baseline.main | Starting Ridge hyperparameter optimization
+2025-11-06 09:33:19,464 | INFO | src.baseline.main | Best Ridge params saved to results/best_ridge_params.json
+2025-11-06 09:33:19,464 | INFO | __main__ | Running baseline: ridge train
+2025-11-06 09:33:19,464 | INFO | src.baseline.main | Training Ridge model
+2025-11-06 09:33:19,464 | INFO | src.baseline.ridge | Loading dataset splits from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/data/dataset_splits_encoded.parquet
+2025-11-06 09:33:19,477 | INFO | src.baseline.ridge | Train split: 16000 rows
+2025-11-06 09:33:19,477 | INFO | src.baseline.ridge | Train shape: (16000, 32)
+2025-11-06 09:33:19,477 | INFO | src.baseline.ridge | Loading best hyperparameters from /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/best_ridge_params.json
+2025-11-06 09:33:19,477 | INFO | src.baseline.ridge | Best hyperparameters: {'alpha': 6.348755301423526}
+2025-11-06 09:33:19,478 | INFO | src.baseline.ridge | Fitting Ridge pipeline with alpha=6.3488
+2025-11-06 09:33:19,489 | INFO | src.baseline.main | Ridge model saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/ridge.joblib
+2025-11-06 09:33:19,489 | INFO | src.baseline.main | Ridge scaler saved to /Users/steven/Documents/Programmation/HumanWeight_BenchMark_LightGBM_RF/results/models/ridge_scaler.joblib
+2025-11-06 09:33:19,489 | INFO | __main__ | Running eval
+2025-11-06 09:33:30,336 | INFO | src.eval.main | Evaluating LightGBM on test split
+2025-11-06 09:33:41,590 | INFO | src.eval.main | Lightgbm evaluation summary saved to results/eval/lightgbm_test_metrics.json
+2025-11-06 09:33:41,590 | INFO | src.eval.main | LightGBM metrics: {"mae": 0.8192848918781521, "mse": 1.489811677015039, "rmse": 1.2205784190354338, "r2": 0.9967086779614274, "mape": 0.011529640191814468, "median_ae": 0.5806108939152779, "explained_variance": 0.9967222180594248, "y_std": 21.275535405643144, "pred_std": 20.90356165958078, "residual_std": 1.2180651761004289}
+2025-11-06 09:33:41,590 | INFO | src.eval.main | LightGBM summary saved to results/eval/lightgbm_test_metrics.json
+2025-11-06 09:33:41,590 | INFO | src.eval.main | Evaluating RandomForest on test split
+2025-11-06 09:33:41,590 | INFO | src.eval.main | Skipping SHAP computation for RandomForest to keep evaluation responsive.
+2025-11-06 09:33:43,163 | INFO | src.eval.main | Random_Forest evaluation summary saved to results/eval/random_forest_test_metrics.json
+2025-11-06 09:33:43,164 | INFO | src.eval.main | RandomForest metrics: {"mae": 0.578513247581413, "mse": 1.027267533610976, "rmse": 1.013542072935789, "r2": 0.9977305398225511, "mape": 0.007968937678335012, "median_ae": 0.39712520613357327, "explained_variance": 0.9977356759103729, "y_std": 21.275535405643144, "pred_std": 20.82104125996497, "residual_std": 1.012394533589175}
+2025-11-06 09:33:43,164 | INFO | src.eval.main | RandomForest summary saved to results/eval/random_forest_test_metrics.json
+2025-11-06 09:33:43,164 | INFO | src.eval.main | Evaluating Ridge on test split
+2025-11-06 09:33:43,199 | INFO | src.eval.main | Ridge evaluation summary saved to results/eval/ridge_test_metrics.json
+2025-11-06 09:33:43,199 | INFO | src.eval.main | Ridge metrics: {"mae": 16.811451805430288, "mse": 444.8367566457085, "rmse": 21.091153516242503, "r2": 0.01725765524360645, "mape": 0.23784660528437052, "median_ae": 14.02331695748775, "explained_variance": 0.017841893552912658, "y_std": 21.275535405643144, "pred_std": 2.829443297315247, "residual_std": 21.084883260426448}
+2025-11-06 09:33:43,199 | INFO | src.eval.main | Ridge summary saved to results/eval/ridge_test_metrics.json
+2025-11-06 09:33:43,199 | INFO | src.eval.main | LightGBM evaluation artifact confirmed at results/eval/lightgbm_test_metrics.json

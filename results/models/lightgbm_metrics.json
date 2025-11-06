@@ -1,0 +1,19 @@
+{
+  "model_path": "results/models/lightgbm.joblib",
+  "parquet_path": "data/dataset_splits_encoded.parquet",
+  "params_path": "results/best_lightgbm_params.json",
+  "target_column": "weight-(kg)",
+  "random_state": 123,
+  "training_rows": 16000,
+  "best_params": {
+    "n_estimators": 1240,
+    "learning_rate": 0.033475989928947014,
+    "num_leaves": 317,
+    "max_depth": 14,
+    "min_child_samples": 29,
+    "subsample": 0.9857826959874048,
+    "colsample_bytree": 0.5002531173970539,
+    "reg_lambda": 73.91530744014005,
+    "reg_alpha": 17.590104982168974
+  }
+}

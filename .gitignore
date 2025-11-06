@@ -1,0 +1,131 @@
+# Virtual environments
+HumanWeight/
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Data and results artifacts (keep committed data/ if desired)
+results/models/
+results/eval/
+# plots/  # Uncomment to include plots in git
+
+# OS files
+.DS_Store
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.Spotlight-V100
+.Trashes
+*.swp
+*.swo
+
+# --- Python bytecode & caches ---
+__pycache__/
+*.py[cod]
+*$py.class
+.cache/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+.venv*/
+venv*/
+env*/
+ENV*/
+.direnv/
+.mamba/
+.conda/
+.python-version
+/Weigh_LifeStyle/
+
+# Dotenv and local secrets
+.env
+.env.*
+*.env
+
+# --- Packaging / build ---
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+pip-wheel-metadata/
+pip-log.txt
+
+# PyInstaller
+*.manifest
+*.spec
+
+# --- Testing / coverage ---
+.pytest_cache/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# --- Jupyter / IPython ---
+.ipynb_checkpoints/
+.ipython/
+.jupyter/
+
+# --- Type checking ---
+.mypy_cache/
+.pyre/
+.pytype/
+
+# --- IDE configs ---
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Keep project data under version control ---
+# The following directories (if present) must be committed entirely
+# for full reproducibility of experiments and reports.
+!data/**
+# But do not track Parquet artifacts in data/ (CSV only policy)
+data/*.parquet
+data/**/*.parquet
+
+# Exclude specific data files (keep only dataset.csv and dataset_splits_encoded.csv)
+data/dataset_cleaned_final.csv
+data/dataset_cleaned.csv
+data/encoders_mappings.csv
+data/encoders_mappings.json
+
+# Exclude trained models (too large for git)
+*.joblib
+
+!datasets/**
+!plots/**
+
+# Include results directory but exclude .joblib files
+!results/
+!results/**
+results/**/*.joblib

@@ -1,0 +1,11 @@
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+exclude = "(HumanWeight/|notebooks/|results/|plots/)"
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip_glob = ["HumanWeight/**", "notebooks/**", "results/**", "plots/**"]
+known_first_party = ["src"]
+
